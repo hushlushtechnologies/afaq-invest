@@ -1,0 +1,14 @@
+// Afaq Invest — database schema.
+//
+// Prisma 7: the connection URL lives in prisma.config.ts, not here.
+// Business models are intentionally absent — they are added sprint by sprint.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}

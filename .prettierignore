@@ -1,0 +1,11 @@
+node_modules
+.next
+dist
+build
+coverage
+.turbo
+pnpm-lock.yaml
+**/src/generated
+*.min.js
+*.md
+next-env.d.ts

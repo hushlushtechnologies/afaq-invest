@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "home": "Home",
+    "opportunities": "Opportunities",
+    "howItWorks": "How It Works",
+    "about": "About",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "signIn": "Sign In",
+    "register": "Register",
+    "portal": "My Portal"
+  },
+  "common": {
+    "appName": "Afaq Invest",
+    "tagline": "Invest across the Afaq ecosystem",
+    "placeholder": "This page is part of the Sprint 1 foundation. Content arrives in later sprints."
+  }
+}

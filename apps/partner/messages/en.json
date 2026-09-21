@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "signIn": "Sign In",
+    "portal": "Partner Portal"
+  },
+  "common": {
+    "appName": "Afaq Invest",
+    "portal": "Partner Portal",
+    "placeholder": "This page is part of the Sprint 1 foundation. Partner features arrive in later sprints."
+  }
+}

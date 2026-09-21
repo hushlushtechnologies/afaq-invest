@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "rootDir": "${configDir}/src",
+    "outDir": "${configDir}/dist",
+    "composite": false,
+    "incremental": false
+  },
+  "include": ["${configDir}/src/**/*.ts", "${configDir}/src/**/*.tsx"],
+  "exclude": ["${configDir}/node_modules", "${configDir}/dist"]
+}

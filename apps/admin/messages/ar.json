@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "investors": "المستثمرون",
+    "companies": "الشركات",
+    "partners": "الشركاء",
+    "investments": "الاستثمارات",
+    "finance": "المالية",
+    "compliance": "الامتثال",
+    "documents": "المستندات",
+    "reports": "التقارير",
+    "support": "الدعم",
+    "administration": "الإدارة",
+    "settings": "الإعدادات"
+  },
+  "common": {
+    "appName": "آفاق إنفست",
+    "portal": "بوابة الإدارة",
+    "placeholder": "هذه الوحدة جزء من أساس المرحلة الأولى. ستتوفر الميزات في المراحل القادمة."
+  }
+}
