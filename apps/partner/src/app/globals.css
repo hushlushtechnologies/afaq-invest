@@ -1,4 +1,8 @@
 @import 'tailwindcss';
+@import '../../../../packages/ui/src/styles/tokens.css';
+@import '../../../../packages/ui/src/styles/typography.css';
+@import '../../../../packages/ui/src/styles/accessibility.css';
+@import '../../../../packages/ui/src/styles/motion.css';
 
 @source '../../../../packages/ui/src';
 

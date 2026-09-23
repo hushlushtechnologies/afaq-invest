@@ -26,12 +26,12 @@ export function AdminNav(): ReactNode {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-60 shrink-0 flex-col bg-neutral-950 px-3 py-5 md:flex">
+    <aside className="hidden w-60 shrink-0 flex-col border-e border-sidebar-border bg-sidebar-background px-3 py-5 md:flex">
       <div className="px-3 pb-5">
-        <p className="text-xs font-medium tracking-widest text-emerald-400 uppercase">
+        <p className="text-xs font-semibold tracking-[0.18em] text-sidebar-active uppercase">
           {tc('appName')}
         </p>
-        <p className="mt-1 text-sm text-neutral-400">{tc('portal')}</p>
+        <p className="mt-1 text-sm text-sidebar-text-muted">{tc('portal')}</p>
       </div>
       <nav className="flex flex-col gap-0.5">
         {MODULES.map((module) => {
@@ -43,10 +43,10 @@ export function AdminNav(): ReactNode {
               key={module}
               href={href}
               className={cn(
-                'rounded-md px-3 py-2 text-sm transition-colors',
+                'rounded-md px-3 py-2 text-sm transition-colors duration-150',
                 isActive
-                  ? 'bg-emerald-600/15 text-emerald-400'
-                  : 'text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100',
+                  ? 'gradient-ghost text-sidebar-active'
+                  : 'text-sidebar-text-muted hover:bg-sidebar-hover hover:text-sidebar-text',
               )}
             >
               {t(module)}

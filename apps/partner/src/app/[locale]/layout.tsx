@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from '@afaq/ui';
 import { routing } from '@/i18n/routing';
+import { fontVariables } from '../fonts';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -29,16 +30,16 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
+      className={fontVariables}
+      suppressHydrationWarning
+    >
       <body>
         <NextIntlClientProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">{children}</div>
+          <ThemeProvider storageKey="afaq-partner-theme">
+            <div className="min-h-screen bg-background">{children}</div>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

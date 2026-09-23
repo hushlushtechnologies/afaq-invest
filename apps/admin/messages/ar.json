@@ -1,4 +1,13 @@
 {
+  "common": {
+    "appName": "آفاق إنفست",
+    "portal": "بوابة الإدارة",
+    "placeholder": "هذه الوحدة جزء من الأساس. ستتوفر الميزات في المراحل القادمة.",
+    "loading": "جارٍ التحميل",
+    "search": "بحث",
+    "language": "اللغة",
+    "changeLanguage": "تغيير اللغة"
+  },
   "nav": {
     "dashboard": "لوحة التحكم",
     "investors": "المستثمرون",
@@ -13,9 +22,55 @@
     "administration": "الإدارة",
     "settings": "الإعدادات"
   },
-  "common": {
-    "appName": "آفاق إنفست",
-    "portal": "بوابة الإدارة",
-    "placeholder": "هذه الوحدة جزء من أساس المرحلة الأولى. ستتوفر الميزات في المراحل القادمة."
+  "actions": {
+    "add": "إضافة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض",
+    "export": "تصدير",
+    "save": "حفظ التغييرات",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "retry": "إعادة المحاولة",
+    "back": "رجوع"
+  },
+  "theme": {
+    "toggle": "تبديل المظهر",
+    "group": "مظهر الألوان",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "table": {
+    "searchPlaceholder": "بحث",
+    "searchLabel": "البحث في الجدول",
+    "selectAll": "تحديد كل الصفوف في هذه الصفحة",
+    "selectRow": "تحديد الصف",
+    "selected": "{count, plural, zero {لم يتم التحديد} one {تم تحديد عنصر واحد} two {تم تحديد عنصرين} few {تم تحديد # عناصر} many {تم تحديد # عنصرًا} other {تم تحديد # عنصر}}",
+    "clearSelection": "إلغاء التحديد",
+    "loading": "جارٍ التحميل",
+    "errorTitle": "تعذّر تحميل البيانات",
+    "noResultsTitle": "لا توجد نتائج مطابقة",
+    "noResultsDescription": "لا يوجد ما يطابق «{search}». تحقق من الإملاء أو امسح البحث.",
+    "clearSearch": "مسح البحث",
+    "rowsPerPage": "عدد الصفوف في الصفحة"
+  },
+  "pagination": {
+    "previous": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "page": "صفحة {page}",
+    "pageOf": "صفحة {page} من {total}",
+    "showing": "عرض {from}–{to} من {total}"
+  },
+  "states": {
+    "emptyTitle": "لا يوجد شيء هنا بعد",
+    "errorTitle": "حدث خطأ ما",
+    "errorDescription": "تعذّر تحميل هذا المحتوى. حاول مرة أخرى، وإذا استمرت المشكلة تواصل مع الدعم.",
+    "offlineTitle": "أنت غير متصل بالإنترنت",
+    "offlineDescription": "تحقق من اتصالك بالإنترنت. سيتم التحميل مرة أخرى عند عودة الاتصال.",
+    "offlineBanner": "أنت غير متصل بالإنترنت. لا يمكن حفظ التغييرات حتى يعود الاتصال.",
+    "noPermissionTitle": "لا تملك صلاحية الوصول",
+    "noPermissionDescription": "دورك لا يتضمن صلاحية عرض هذه الصفحة. إذا كنت بحاجة إلى الوصول، تواصل مع المسؤول."
   }
 }

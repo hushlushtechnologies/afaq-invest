@@ -1,23 +1,37 @@
 import type { ReactNode } from 'react';
 import { cn } from '@afaq/utils';
+import { PageHeader } from './navigation/page-header';
 
 export interface PageShellProps {
   title: string;
   description?: string;
+  eyebrow?: string;
+  breadcrumb?: ReactNode;
+  actions?: ReactNode;
   className?: string;
   children?: ReactNode;
 }
 
-export function PageShell({ title, description, className, children }: PageShellProps): ReactNode {
+/** A standard page: container, header, and consistent spacing between sections. */
+export function PageShell({
+  title,
+  description,
+  eyebrow,
+  breadcrumb,
+  actions,
+  className,
+  children,
+}: PageShellProps): ReactNode {
   return (
-    <section className={cn('mx-auto w-full max-w-5xl px-6 py-10', className)}>
-      <header className="border-b border-neutral-200 pb-5 dark:border-neutral-800">
-        <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">{title}</h1>
-        {description ? (
-          <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">{description}</p>
-        ) : null}
-      </header>
-      {children ? <div className="pt-6">{children}</div> : null}
+    <section className={cn('container-page page-padding', className)}>
+      <PageHeader
+        title={title}
+        description={description}
+        eyebrow={eyebrow}
+        breadcrumb={breadcrumb}
+        actions={actions}
+      />
+      {children ? <div className="section-gap pt-8">{children}</div> : null}
     </section>
   );
 }

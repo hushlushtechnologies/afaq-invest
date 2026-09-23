@@ -1,4 +1,13 @@
 {
+  "common": {
+    "appName": "Afaq Invest",
+    "portal": "Admin Portal",
+    "placeholder": "This module is part of the foundation. Features arrive in later sprints.",
+    "loading": "Loading",
+    "search": "Search",
+    "language": "Language",
+    "changeLanguage": "Change language"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "investors": "Investors",
@@ -13,9 +22,55 @@
     "administration": "Administration",
     "settings": "Settings"
   },
-  "common": {
-    "appName": "Afaq Invest",
-    "portal": "Admin Portal",
-    "placeholder": "This module is part of the Sprint 1 foundation. Features arrive in later sprints."
+  "actions": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "export": "Export",
+    "save": "Save changes",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "retry": "Try again",
+    "back": "Go back"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "group": "Colour theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "table": {
+    "searchPlaceholder": "Search",
+    "searchLabel": "Search the table",
+    "selectAll": "Select all rows on this page",
+    "selectRow": "Select row",
+    "selected": "{count, plural, one {# selected} other {# selected}}",
+    "clearSelection": "Clear selection",
+    "loading": "Loading",
+    "errorTitle": "Could not load this data",
+    "noResultsTitle": "No matching results",
+    "noResultsDescription": "Nothing matches “{search}”. Check the spelling or clear the search.",
+    "clearSearch": "Clear search",
+    "rowsPerPage": "Rows per page"
+  },
+  "pagination": {
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "Page {page}",
+    "pageOf": "Page {page} of {total}",
+    "showing": "Showing {from}–{to} of {total}"
+  },
+  "states": {
+    "emptyTitle": "Nothing here yet",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "This could not be loaded. Try again, and if it keeps happening, contact support.",
+    "offlineTitle": "You’re offline",
+    "offlineDescription": "Check your internet connection. This will load again once you’re back online.",
+    "offlineBanner": "You’re offline. Changes can’t be saved until your connection returns.",
+    "noPermissionTitle": "You don’t have access to this",
+    "noPermissionDescription": "Your role doesn’t include permission to view this page. If you need access, ask an administrator."
   }
 }

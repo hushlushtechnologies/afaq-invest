@@ -1,0 +1,313 @@
+/* ==========================================================================
+   AFAQ INVEST — TYPOGRAPHY, LAYOUT & MOTION TOKENS
+   ========================================================================== */
+
+/* ==========================================================================
+   FONT FAMILIES
+   --font-inter, --font-jakarta and --font-arabic are set by each app's
+   src/app/fonts.ts. --afaq-tracking-scale is 1 for Latin and 0 for Arabic,
+   because letter spacing breaks the joins between Arabic letters.
+   ========================================================================== */
+
+:root {
+  --afaq-font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --afaq-font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, sans-serif;
+  --afaq-tracking-scale: 1;
+}
+
+html[lang='ar'] {
+  --afaq-font-sans: var(--font-arabic), var(--font-inter), ui-sans-serif, sans-serif;
+  --afaq-font-display: var(--font-arabic), var(--font-inter), ui-sans-serif, sans-serif;
+  --afaq-tracking-scale: 0;
+}
+
+@theme inline {
+  --font-sans: var(--afaq-font-sans);
+  --font-display: var(--afaq-font-display);
+}
+
+/* ==========================================================================
+   LAYOUT SCALES
+   ========================================================================== */
+
+@theme {
+  --container-page: 80rem;
+  --container-narrow: 48rem;
+  --container-wide: 96rem;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:root {
+  /* Transition durations */
+  --afaq-duration-fast: 150ms;
+  --afaq-duration-normal: 220ms;
+  --afaq-duration-slow: 320ms;
+
+  /* Z-index — one ordered list, so layers never fight */
+  --afaq-z-raised: 10;
+  --afaq-z-sticky: 20;
+  --afaq-z-dropdown: 30;
+  --afaq-z-drawer: 40;
+  --afaq-z-backdrop: 50;
+  --afaq-z-modal: 60;
+  --afaq-z-popover: 70;
+  --afaq-z-tooltip: 80;
+  --afaq-z-toast: 90;
+}
+
+/* ==========================================================================
+   TYPE SCALE
+   clamp() grows each size smoothly from mobile to desktop, so headings stay
+   readable at every width without breakpoint classes on every heading.
+   ========================================================================== */
+
+@utility text-display {
+  font-family: var(--afaq-font-display);
+  font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: calc(-0.03em * var(--afaq-tracking-scale));
+}
+
+@utility text-h1 {
+  font-family: var(--afaq-font-display);
+  font-size: clamp(1.875rem, 1.5rem + 1.5vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: calc(-0.025em * var(--afaq-tracking-scale));
+}
+
+@utility text-h2 {
+  font-family: var(--afaq-font-display);
+  font-size: clamp(1.5rem, 1.3rem + 0.85vw, 1.875rem);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: calc(-0.02em * var(--afaq-tracking-scale));
+}
+
+@utility text-h3 {
+  font-family: var(--afaq-font-display);
+  font-size: clamp(1.25rem, 1.15rem + 0.45vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: calc(-0.015em * var(--afaq-tracking-scale));
+}
+
+@utility text-h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: calc(-0.01em * var(--afaq-tracking-scale));
+}
+
+@utility text-h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+@utility text-h6 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+@utility text-body-large {
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+@utility text-body {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+@utility text-body-small {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+@utility text-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@utility text-caption {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+@utility text-overline {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: calc(0.14em * var(--afaq-tracking-scale));
+  text-transform: uppercase;
+}
+
+@utility text-button {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* Tabular figures — every digit the same width, so money columns line up. */
+@utility text-numeric {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+@utility text-numeric-large {
+  font-family: var(--afaq-font-display);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: calc(-0.02em * var(--afaq-tracking-scale));
+}
+
+/* ==========================================================================
+   LAYOUT UTILITIES
+   ========================================================================== */
+
+@utility container-page {
+  width: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility container-narrow {
+  width: 100%;
+  max-width: var(--container-narrow);
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+}
+
+@utility page-padding {
+  padding-block: 1.5rem;
+
+  @media (width >= 64rem) {
+    padding-block: 2.5rem;
+  }
+}
+
+@utility section-gap {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  @media (width >= 64rem) {
+    gap: 2.5rem;
+  }
+}
+
+@utility card-padding {
+  padding: 1.25rem;
+
+  @media (width >= 64rem) {
+    padding: 1.5rem;
+  }
+}
+
+/* ==========================================================================
+   Z-INDEX UTILITIES
+   ========================================================================== */
+
+@utility z-raised {
+  z-index: var(--afaq-z-raised);
+}
+@utility z-sticky {
+  z-index: var(--afaq-z-sticky);
+}
+@utility z-dropdown {
+  z-index: var(--afaq-z-dropdown);
+}
+@utility z-drawer {
+  z-index: var(--afaq-z-drawer);
+}
+@utility z-backdrop {
+  z-index: var(--afaq-z-backdrop);
+}
+@utility z-modal {
+  z-index: var(--afaq-z-modal);
+}
+@utility z-popover {
+  z-index: var(--afaq-z-popover);
+}
+@utility z-tooltip {
+  z-index: var(--afaq-z-tooltip);
+}
+@utility z-toast {
+  z-index: var(--afaq-z-toast);
+}
+
+/* ==========================================================================
+   TRANSITION UTILITIES
+   ========================================================================== */
+
+@utility transition-fast {
+  transition-duration: var(--afaq-duration-fast);
+  transition-timing-function: var(--ease-out-soft);
+}
+
+@utility transition-normal {
+  transition-duration: var(--afaq-duration-normal);
+  transition-timing-function: var(--ease-out-soft);
+}
+
+@utility transition-slow {
+  transition-duration: var(--afaq-duration-slow);
+  transition-timing-function: var(--ease-out-soft);
+}
+
+/* ==========================================================================
+   BASE TYPOGRAPHY
+   ========================================================================== */
+
+@layer base {
+  body {
+    font-family: var(--afaq-font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  /* Arabic script needs more room above and below each line. */
+  html[lang='ar'] body {
+    line-height: 1.8;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--afaq-font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}

@@ -1,9 +1,5 @@
 export type CompanyType = 'INTERNAL' | 'THIRD_PARTY';
 
-export type Locale = 'en' | 'ar';
-
-export type TextDirection = 'ltr' | 'rtl';
-
 export interface ApiError {
   statusCode: number;
   message: string;
@@ -16,3 +12,9 @@ export interface Paginated<T> {
   page: number;
   pageSize: number;
 }
+
+export * from './locale';
+
+// export type ThemeMode = 'light' | 'dark' | 'system';
+
+// export type ResolvedTheme = 'light' | 'dark';

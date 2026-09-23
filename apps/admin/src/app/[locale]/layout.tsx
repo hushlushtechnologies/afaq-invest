@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
+import { ThemeProvider } from '@afaq/ui';
 import { AdminNav } from '@/components/admin-nav';
-import { ThemeProvider } from '@/components/theme-provider';
 import { routing } from '@/i18n/routing';
+import { fontVariables } from '../fonts';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -30,18 +31,18 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
+      className={fontVariables}
+      suppressHydrationWarning
+    >
       <body>
         <NextIntlClientProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
+          <ThemeProvider storageKey="afaq-admin-theme">
+            <div className="flex min-h-screen bg-background">
               <AdminNav />
-              <div className="flex-1">{children}</div>
+              <div className="min-w-0 flex-1">{children}</div>
             </div>
           </ThemeProvider>
         </NextIntlClientProvider>
