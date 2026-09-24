@@ -25,6 +25,7 @@ export function ThemeToggle({ className, label = 'Toggle theme' }: ThemeTogglePr
   return (
     <IconButton
       icon={icon}
+      size="sm"
       label={label}
       variant="outline"
       onClick={toggle}

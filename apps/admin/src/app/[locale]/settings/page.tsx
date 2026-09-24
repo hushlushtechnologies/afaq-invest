@@ -1,8 +1,11 @@
-import type { ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
-import { PageShell } from '@afaq/ui';
+import { redirect } from '@/i18n/navigation';
+import type { AppLocale } from '@/i18n/routing';
 
-export default function SettingsPage(): ReactNode {
-  const t = useTranslations();
-  return <PageShell title={t('nav.settings')} description={t('common.placeholder')} />;
+/** /settings opens the first section. */
+export default async function SettingsPage({
+  params,
+}: Readonly<{ params: Promise<{ locale: AppLocale }> }>): Promise<null> {
+  const { locale } = await params;
+  redirect({ href: '/settings/profile', locale });
+  return null;
 }

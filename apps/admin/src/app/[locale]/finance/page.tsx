@@ -1,8 +1,11 @@
-import type { ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
-import { PageShell } from '@afaq/ui';
+import { redirect } from '@/i18n/navigation';
+import type { AppLocale } from '@/i18n/routing';
 
-export default function FinancePage(): ReactNode {
-  const t = useTranslations();
-  return <PageShell title={t('nav.finance')} description={t('common.placeholder')} />;
+/** /finance has no page of its own — it opens its first section. */
+export default async function FinancePage({
+  params,
+}: Readonly<{ params: Promise<{ locale: AppLocale }> }>): Promise<null> {
+  const { locale } = await params;
+  redirect({ href: '/finance/payments', locale });
+  return null;
 }

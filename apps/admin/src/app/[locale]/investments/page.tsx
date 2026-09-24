@@ -1,8 +1,11 @@
-import type { ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
-import { PageShell } from '@afaq/ui';
+import { redirect } from '@/i18n/navigation';
+import type { AppLocale } from '@/i18n/routing';
 
-export default function InvestmentsPage(): ReactNode {
-  const t = useTranslations();
-  return <PageShell title={t('nav.investments')} description={t('common.placeholder')} />;
+/** /investors has no page of its own — it opens its first section. */
+export default async function InvestorsPage({
+  params,
+}: Readonly<{ params: Promise<{ locale: AppLocale }> }>): Promise<null> {
+  const { locale } = await params;
+  redirect({ href: '/investors/all', locale });
+  return null;
 }

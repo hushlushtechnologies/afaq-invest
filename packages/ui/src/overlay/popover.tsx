@@ -26,7 +26,25 @@ interface TriggerProps {
   onClick?: (event: MouseEvent<HTMLElement>) => void;
 }
 
-const WIDTHS = { sm: 'w-64', md: 'w-80', lg: 'w-96' } as const;
+/**
+ * The trigger may be wrapped, so find the first element inside
+ * that can actually take focus.
+ */
+function focusTrigger(wrapper: HTMLElement | null): void {
+  if (!wrapper) return;
+
+  const focusable = wrapper.querySelector<HTMLElement>(
+    'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+  );
+
+  (focusable ?? (wrapper.firstElementChild as HTMLElement | null))?.focus();
+}
+
+const WIDTHS = {
+  sm: 'w-64',
+  md: 'w-80',
+  lg: 'w-96',
+} as const;
 
 export interface PopoverProps {
   trigger: ReactElement<TriggerProps>;
@@ -42,8 +60,11 @@ export interface PopoverProps {
 }
 
 /**
- * A small floating panel for content rather than actions — a filter form,
- * an explanation, a summary. Escape or an outside click closes it.
+ * A floating glass panel for content rather than actions.
+ *
+ * Escape or an outside click closes it.
+ * Focus moves into the panel when it opens and returns to the
+ * trigger when it closes.
  */
 export function Popover({
   trigger,
@@ -58,18 +79,30 @@ export function Popover({
   onOpenChange,
 }: PopoverProps): ReactNode {
   const [innerOpen, setInnerOpen] = useState(false);
+
   const open = controlledOpen ?? innerOpen;
+
   const panelId = useId();
   const titleId = useId();
+
   const triggerWrapRef = useRef<HTMLSpanElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
   const motionProps = useMotionPreset('popover');
+
   const isTopmost = useOverlayStack(open);
-  const { refs, floatingStyles } = useFloatingPosition(open, { placement, gap: 8 });
+
+  const { refs, floatingStyles } = useFloatingPosition(open, {
+    placement,
+    gap: 10,
+  });
 
   const setOpen = useCallback(
     (next: boolean) => {
-      if (controlledOpen === undefined) setInnerOpen(next);
+      if (controlledOpen === undefined) {
+        setInnerOpen(next);
+      }
+
       onOpenChange?.(next);
     },
     [controlledOpen, onOpenChange],
@@ -77,17 +110,23 @@ export function Popover({
 
   const closeAndReturn = useCallback(() => {
     setOpen(false);
-    const element = triggerWrapRef.current?.firstElementChild;
-    if (element instanceof HTMLElement) element.focus();
+    focusTrigger(triggerWrapRef.current);
   }, [setOpen]);
 
   useEscapeKey(open, closeAndReturn, isTopmost);
+
   useClickOutside([triggerWrapRef, panelRef], open, () => setOpen(false));
 
-  // Move focus into the panel when it opens, so keyboard users land in it.
+  /**
+   * Move focus into the panel when it opens.
+   */
   useEffect(() => {
     if (!open) return;
-    const frame = window.requestAnimationFrame(() => panelRef.current?.focus());
+
+    const frame = window.requestAnimationFrame(() => {
+      panelRef.current?.focus();
+    });
+
     return () => window.cancelAnimationFrame(frame);
   }, [open]);
 
@@ -95,6 +134,7 @@ export function Popover({
     'aria-haspopup': 'dialog',
     'aria-expanded': open,
     'aria-controls': open ? panelId : undefined,
+
     onClick: (event: MouseEvent<HTMLElement>) => {
       trigger.props.onClick?.(event);
       setOpen(!open);
@@ -125,32 +165,91 @@ export function Popover({
                 tabIndex={-1}
                 {...motionProps}
                 className={cn(
-                  'max-w-[calc(100vw-1rem)] rounded-xl border border-border bg-surface-elevated p-4 shadow-overlay outline-none',
+                  // Sizing
+                  'max-w-[calc(100vw-1rem)]',
                   WIDTHS[width],
+
+                  // Shape
+                  'overflow-hidden rounded-2xl',
+
+                  // Glass surface
+                  'border border-border/60',
+                  'bg-surface-elevated/90',
+                  'backdrop-blur-2xl',
+                  'supports-[backdrop-filter]:bg-surface-elevated/76',
+
+                  // Depth
+                  'shadow-[0_24px_70px_-28px_oklch(0_0_0_/_0.55)]',
+                  'shadow-[0_10px_35px_-18px_oklch(0_0_0_/_0.3)]',
+
+                  // Focus
+                  'outline-none',
+
+                  // Brand atmosphere
+                  'before:pointer-events-none',
+                  'before:absolute',
+                  'before:-start-12',
+                  'before:-top-12',
+                  'before:size-32',
+                  'before:rounded-full',
+                  'before:bg-primary/8',
+                  'before:blur-3xl',
+
+                  // Secondary glow
+                  'after:pointer-events-none',
+                  'after:absolute',
+                  'after:-end-12',
+                  'after:-bottom-12',
+                  'after:size-32',
+                  'after:rounded-full',
+                  'after:bg-accent/6',
+                  'after:blur-3xl',
+
                   className,
                 )}
               >
-                {title || showCloseButton ? (
-                  <div className="mb-3 flex items-start justify-between gap-3">
-                    {title ? (
-                      <h3 id={titleId} className="text-h6 text-fg">
-                        {title}
-                      </h3>
-                    ) : (
-                      <span />
-                    )}
-                    {showCloseButton ? (
-                      <IconButton
-                        icon={<X />}
-                        label={closeLabel}
-                        size="sm"
-                        onClick={closeAndReturn}
-                        className="-me-1.5 -mt-1 w-8"
-                      />
-                    ) : null}
+                <div className="relative z-10">
+                  {title || showCloseButton ? (
+                    <div
+                      className={cn(
+                        'flex items-start justify-between gap-4',
+                        'border-b border-border/40',
+                        'px-4 pt-4 pb-3.5',
+                      )}
+                    >
+                      {title ? (
+                        <h3
+                          id={titleId}
+                          className={cn('min-w-0 flex-1', 'text-h6 font-semibold', 'text-fg')}
+                        >
+                          {title}
+                        </h3>
+                      ) : (
+                        <span />
+                      )}
+
+                      {showCloseButton ? (
+                        <IconButton
+                          icon={<X />}
+                          label={closeLabel}
+                          size="sm"
+                          onClick={closeAndReturn}
+                          className={cn(
+                            '-me-1.5 -mt-1.5',
+                            'size-8 rounded-lg',
+                            'text-fg-muted',
+                            'hover:bg-surface-hover',
+                            'hover:text-fg',
+                          )}
+                        />
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  <div className={cn('px-4 py-4', 'text-body-small text-fg-secondary')}>
+                    {children}
                   </div>
-                ) : null}
-                <div className="text-body-small text-fg-secondary">{children}</div>
+                </div>
               </motion.div>
             </div>
           ) : null}

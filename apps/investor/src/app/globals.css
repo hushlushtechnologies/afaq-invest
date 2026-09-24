@@ -3,8 +3,11 @@
 @import '../../../../packages/ui/src/styles/typography.css';
 @import '../../../../packages/ui/src/styles/accessibility.css';
 @import '../../../../packages/ui/src/styles/motion.css';
+@import '../../../../packages/ui/src/styles/scrollbar.css';
 
 @source '../../../../packages/ui/src';
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @custom-variant dark (&:where(.dark, .dark *));
 

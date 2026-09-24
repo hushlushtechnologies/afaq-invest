@@ -14,6 +14,7 @@ import { MotionShowcase } from './motion-showcase';
 import { NavigationShowcase } from './navigation-showcase';
 import { OverlayShowcase } from './overlay-showcase';
 import { ShowcaseSection } from './showcase-section';
+import { ShowcaseToc } from './showcase-toc';
 import { StateShowcase } from './state-showcase';
 import { TableShowcase } from './table-showcase';
 import { ThemeTester } from './theme-tester';
@@ -24,28 +25,37 @@ export default function DesignSystemPage(): ReactNode {
     <PageShell
       eyebrow="Development only"
       title="Design System"
-      description="Visual reference for tokens, typography and components. Removed before production."
+      description="Visual reference for tokens, typography and components. Not available in production."
     >
-      <ShowcaseSection title="Theme">
-        <ThemeTester />
-      </ShowcaseSection>
+      {/* Contents on the right on wide screens; a jump menu above on narrower ones. */}
+      <div className="flex flex-col gap-8 xl:flex-row-reverse xl:items-start xl:gap-10">
+        <div className="xl:sticky xl:top-4 xl:w-56 xl:shrink-0">
+          <ShowcaseToc />
+        </div>
 
-      <LocaleShowcase />
-      <LottieShowcase />
-      <MotionShowcase />
-      <StateShowcase />
-      <TableShowcase />
-      <NavigationShowcase />
-      <FloatingShowcase />
-      <OverlayShowcase />
-      <DisplayShowcase />
-      <FormIntegration />
-      <ChoiceShowcase />
-      <FormShowcase />
-      <ButtonShowcase />
-      <TypographyShowcase />
-      <ColorShowcase />
-      <LayoutShowcase />
+        <div className="section-gap min-w-0 flex-1">
+          <ShowcaseSection id="theme" title="Theme">
+            <ThemeTester />
+          </ShowcaseSection>
+
+          <LocaleShowcase />
+          <LottieShowcase />
+          <MotionShowcase />
+          <StateShowcase />
+          <TableShowcase />
+          <NavigationShowcase />
+          <FloatingShowcase />
+          <OverlayShowcase />
+          <DisplayShowcase />
+          <FormIntegration />
+          <ChoiceShowcase />
+          <FormShowcase />
+          <ButtonShowcase />
+          <TypographyShowcase />
+          <ColorShowcase />
+          <LayoutShowcase />
+        </div>
+      </div>
     </PageShell>
   );
 }

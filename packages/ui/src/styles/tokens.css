@@ -250,41 +250,97 @@
    ========================================================================== */
 
 @utility gradient-primary {
-  background-image: linear-gradient(
-    135deg,
-    var(--afaq-primary) 0%,
-    var(--afaq-primary-active) 100%
-  );
+  background-image:
+    radial-gradient(
+      circle at 15% 20%,
+      color-mix(in oklch, var(--afaq-primary) 95%, white) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      color-mix(in oklch, var(--afaq-accent) 70%, transparent) 0%,
+      transparent 48%
+    ),
+    linear-gradient(
+      135deg,
+      var(--afaq-primary-active) 0%,
+      var(--afaq-primary) 48%,
+      var(--afaq-primary-hover) 100%
+    );
 }
 
 @utility gradient-secondary {
-  background-image: linear-gradient(
-    135deg,
-    var(--afaq-secondary) 0%,
-    var(--afaq-secondary-hover) 100%
-  );
+  background-image:
+    radial-gradient(
+      circle at 20% 10%,
+      color-mix(in oklch, var(--afaq-secondary) 80%, white) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      color-mix(in oklch, var(--afaq-primary) 35%, transparent) 0%,
+      transparent 50%
+    ),
+    linear-gradient(
+      145deg,
+      var(--afaq-secondary-hover) 0%,
+      var(--afaq-secondary) 52%,
+      var(--afaq-primary) 100%
+    );
 }
 
 @utility gradient-accent {
-  background-image: linear-gradient(135deg, var(--afaq-accent) 0%, var(--afaq-accent-hover) 100%);
+  background-image:
+    radial-gradient(
+      circle at 25% 25%,
+      color-mix(in oklch, white 22%, transparent) 0%,
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      color-mix(in oklch, var(--afaq-primary) 30%, transparent) 0%,
+      transparent 48%
+    ),
+    linear-gradient(
+      135deg,
+      var(--afaq-accent-hover) 0%,
+      var(--afaq-accent) 48%,
+      var(--afaq-primary) 100%
+    );
 }
-
 @utility gradient-ghost {
-  background-image: linear-gradient(
-    135deg,
-    color-mix(in oklch, var(--afaq-primary) 14%, transparent) 0%,
-    color-mix(in oklch, var(--afaq-primary) 4%, transparent) 100%
-  );
+  background-image:
+    radial-gradient(
+      circle at 0% 50%,
+      color-mix(in oklch, var(--afaq-primary) 18%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 50%,
+      color-mix(in oklch, var(--afaq-accent) 10%, transparent) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--afaq-primary) 12%, transparent) 0%,
+      color-mix(in oklch, var(--afaq-primary) 4%, transparent) 100%
+    );
 }
 
 @utility gradient-surface {
-  background-image: linear-gradient(
-    180deg,
-    var(--afaq-surface-elevated) 0%,
-    var(--afaq-surface) 100%
-  );
+  background-image:
+    radial-gradient(
+      100% 70% at 0% 0%,
+      color-mix(in oklch, var(--afaq-primary) 5%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      80% 60% at 100% 100%,
+      color-mix(in oklch, var(--afaq-accent) 4%, transparent) 0%,
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--afaq-surface-elevated) 0%, var(--afaq-surface) 100%);
 }
-
 @utility gradient-highlight {
   background-image: linear-gradient(
     135deg,
@@ -303,6 +359,31 @@
     linear-gradient(135deg, var(--afaq-primary) 0%, var(--afaq-accent) 100%);
   background-origin: border-box;
   background-clip: padding-box, border-box;
+}
+
+@utility gradient-aurora {
+  background-image:
+    radial-gradient(
+      circle at 15% 20%,
+      color-mix(in oklch, var(--afaq-primary) 42%, transparent) 0%,
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 80% 15%,
+      color-mix(in oklch, var(--afaq-accent) 28%, transparent) 0%,
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 70% 85%,
+      color-mix(in oklch, var(--afaq-primary-active) 28%, transparent) 0%,
+      transparent 42%
+    ),
+    linear-gradient(
+      135deg,
+      var(--afaq-primary-active) 0%,
+      var(--afaq-primary) 45%,
+      var(--afaq-primary-hover) 100%
+    );
 }
 
 /* ==========================================================================

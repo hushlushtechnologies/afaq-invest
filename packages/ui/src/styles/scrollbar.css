@@ -1,0 +1,78 @@
+/* ==========================================================================
+   AFAQ INVEST — SCROLLBARS
+   Slim and quiet, but never hidden: a scrollbar that disappears entirely
+   leaves people unsure whether there is more content.
+   Phase 26 reviews scrolling across the whole app.
+   ========================================================================== */
+
+/* For content areas on normal surfaces. */
+@utility scrollbar-subtle {
+  scrollbar-width: thin;
+  scrollbar-color: var(--afaq-border-strong) transparent;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--afaq-border-strong);
+    border-radius: 9999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--afaq-text-muted);
+  }
+}
+
+/* For the always-dark sidebar, which has its own palette. */
+@utility scrollbar-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--afaq-sidebar-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 0.375rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--afaq-sidebar-border);
+    border-radius: 9999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--afaq-sidebar-text-muted);
+  }
+}
+
+/* For rows that scroll sideways on their own — tab strips, chip rows — where a
+   visible scrollbar would sit awkwardly under a few centimetres of content.
+   Safe here because the content is short and the edge is obviously cut off. */
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Scroll containers: jumping to an anchor inside one should leave room for the
+   sticky bar above it, and should glide rather than teleport. */
+@utility scroll-smooth-region {
+  scroll-behavior: smooth;
+  scroll-padding-block-start: 4.5rem;
+}
+
+/* Jumping to an anchor must not tuck the heading under the sticky topbar.
+   scroll-margin works for both #hash links and scrollIntoView(). */
+:target {
+  scroll-margin-block-start: 4.5rem;
+}

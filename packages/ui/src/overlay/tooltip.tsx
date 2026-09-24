@@ -10,6 +10,7 @@ import {
   useState,
   type FocusEvent,
   type MouseEvent,
+  type PointerEvent,
   type ReactElement,
   type ReactNode,
 } from 'react';
@@ -23,6 +24,7 @@ interface TriggerProps {
   onMouseLeave?: (event: MouseEvent<HTMLElement>) => void;
   onFocus?: (event: FocusEvent<HTMLElement>) => void;
   onBlur?: (event: FocusEvent<HTMLElement>) => void;
+  onPointerDown?: (event: PointerEvent<HTMLElement>) => void;
 }
 
 export interface TooltipProps {
@@ -33,6 +35,8 @@ export interface TooltipProps {
   placement?: OverlayPlacement;
   /** Wait before showing on hover, in milliseconds. Keyboard focus shows it at once. */
   delay?: number;
+  /** Distance from the trigger, in pixels. */
+  gap?: number;
   disabled?: boolean;
   className?: string;
 }
@@ -46,6 +50,7 @@ export function Tooltip({
   children,
   placement = 'top',
   delay = 400,
+  gap = 8,
   disabled = false,
   className,
 }: TooltipProps): ReactNode {
@@ -53,7 +58,7 @@ export function Tooltip({
   const timer = useRef<number | null>(null);
   const tooltipId = useId();
   const motionProps = useMotionPreset('tooltip');
-  const { refs, floatingStyles } = useFloatingPosition(open, { placement, gap: 8 });
+  const { refs, floatingStyles } = useFloatingPosition(open, { placement, gap });
 
   const clearTimer = useCallback(() => {
     if (timer.current !== null) {
@@ -108,11 +113,20 @@ export function Tooltip({
       children.props.onBlur?.(event);
       hide();
     },
+    // Pressing the button answers the question the tooltip was answering, and
+    // the button may change underneath (an icon swap) so the pointer never
+    // "leaves" it. Hide on press, and don't reopen until the pointer returns.
+    onPointerDown: (event: PointerEvent<HTMLElement>) => {
+      children.props.onPointerDown?.(event);
+      hide();
+    },
   } as TriggerProps);
 
   return (
     <>
-      <span ref={refs.setReference} className="inline-flex">
+      {/* The wrapper catches the pointer leaving even if the button inside it
+          was replaced while the pointer was over it. */}
+      <span ref={refs.setReference} onPointerLeave={hide} className="inline-flex">
         {trigger}
       </span>
       <Portal>

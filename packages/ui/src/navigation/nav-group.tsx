@@ -35,7 +35,7 @@ export function NavGroup({
             aria-hidden="true"
             className={cn(
               'px-3 pt-4 pb-1.5 text-overline',
-              variant === 'sidebar' ? 'text-sidebar-text-muted' : 'text-fg-muted',
+              variant === 'sidebar' ? 'text-xs text-sidebar-text-muted' : 'text-fg-muted',
             )}
           >
             {title}

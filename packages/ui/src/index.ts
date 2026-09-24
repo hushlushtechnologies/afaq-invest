@@ -81,3 +81,4 @@ export * from './theme/theme-provider';
 export * from './theme/theme-toggle';
 export * from './theme/theme-selector';
 export * from './page-shell';
+export * from './hooks/use-media-query';

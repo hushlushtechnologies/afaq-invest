@@ -3,7 +3,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useCallback, useId, useRef, type ReactNode } from 'react';
+
 import { cn } from '@afaq/utils';
+
 import { IconButton } from '../button/icon-button';
 import { useMotionPreset } from '../motion/use-motion-preset';
 import { Backdrop } from './backdrop';
@@ -13,30 +15,86 @@ import { useBodyScrollLock } from './use-body-scroll-lock';
 import { useEscapeKey } from './use-escape-key';
 import { useFocusTrap } from './use-focus-trap';
 
-/** start and end follow reading direction: start is the left in English, the right in Arabic. */
+/**
+ * start and end follow reading direction:
+ * start is left in English and right in Arabic.
+ */
 export type DrawerSide = 'start' | 'end' | 'bottom';
+
 export type DrawerSize = 'sm' | 'md' | 'lg';
+
+/**
+ * sidebar uses the always-dark palette
+ * for the mobile navigation menu.
+ */
+export type DrawerTone = 'surface' | 'sidebar';
 
 const SIDE_CLASSES: Record<DrawerSide, string> = {
   start: 'inset-y-0 start-0 h-full max-w-[90vw] rounded-e-2xl border-e',
+
   end: 'inset-y-0 end-0 h-full max-w-[90vw] rounded-s-2xl border-s',
+
   bottom: 'inset-x-0 bottom-0 max-h-[85dvh] w-full rounded-t-2xl border-t',
 };
 
-const WIDTHS: Record<DrawerSize, string> = { sm: 'w-80', md: 'w-96', lg: 'w-[32rem]' };
+const WIDTHS: Record<DrawerSize, string> = {
+  sm: 'w-80',
+  md: 'w-96',
+  lg: 'w-[32rem]',
+};
+
+interface DrawerToneConfig {
+  panel: string;
+  divider: string;
+  title: string;
+  text: string;
+  close: string;
+}
+
+const TONES: Record<DrawerTone, DrawerToneConfig> = {
+  surface: {
+    panel: 'border-border bg-surface',
+    divider: 'border-border-subtle',
+    title: 'text-fg',
+    text: 'text-fg-secondary',
+    close: '',
+  },
+
+  sidebar: {
+    panel: 'border-sidebar-border bg-sidebar-background',
+    divider: 'border-sidebar-border',
+    title: 'text-sidebar-text',
+    text: 'text-sidebar-text-muted',
+    close:
+      'text-sidebar-text-muted hover:bg-sidebar-hover hover:text-sidebar-text focus-visible:ring-sidebar-active focus-visible:ring-offset-sidebar-background',
+  },
+};
 
 export interface DrawerProps {
   open: boolean;
+
   onClose: () => void;
+
   title: ReactNode;
+
   description?: ReactNode;
+
   side?: DrawerSide;
+
   size?: DrawerSize;
+
+  tone?: DrawerTone;
+
   children?: ReactNode;
+
   footer?: ReactNode;
+
   hideCloseButton?: boolean;
+
   dismissible?: boolean;
+
   closeLabel?: string;
+
   className?: string;
 }
 
@@ -47,6 +105,7 @@ export function Drawer({
   description,
   side = 'end',
   size = 'md',
+  tone = 'surface',
   children,
   footer,
   hideCloseButton = false,
@@ -55,20 +114,26 @@ export function Drawer({
   className,
 }: DrawerProps): ReactNode {
   const panelRef = useRef<HTMLDivElement>(null);
+
   const titleId = useId();
   const descriptionId = useId();
+
   const isTopmost = useOverlayStack(open);
 
+  const palette = TONES[tone];
+
   const dismiss = useCallback(() => {
-    if (dismissible) onClose();
+    if (dismissible) {
+      onClose();
+    }
   }, [dismissible, onClose]);
 
   useBodyScrollLock(open);
+
   useEscapeKey(open, dismiss, isTopmost);
+
   useFocusTrap(panelRef, open, isTopmost);
 
-  // The preset works out which physical edge "start" and "end" are, and
-  // follows the language if it changes while the drawer is open.
   const motionProps = useMotionPreset(
     side === 'start' ? 'drawerStart' : side === 'end' ? 'drawerEnd' : 'drawerBottom',
   );
@@ -79,6 +144,7 @@ export function Drawer({
         {open ? (
           <div className="fixed inset-0 z-drawer">
             <Backdrop onClick={dismiss} />
+
             <motion.div
               ref={panelRef}
               role="dialog"
@@ -88,23 +154,31 @@ export function Drawer({
               tabIndex={-1}
               {...motionProps}
               className={cn(
-                'fixed flex flex-col border-border bg-surface shadow-overlay outline-none',
+                'fixed flex flex-col shadow-overlay outline-none',
+                palette.panel,
                 SIDE_CLASSES[side],
                 side !== 'bottom' && WIDTHS[size],
                 className,
               )}
             >
-              <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border-subtle p-5">
+              <div
+                className={cn(
+                  'flex shrink-0 items-start justify-between gap-4 border-b p-5',
+                  palette.divider,
+                )}
+              >
                 <div className="min-w-0">
-                  <h2 id={titleId} className="text-h5 text-fg">
+                  <h2 id={titleId} className={cn('text-h5', palette.title)}>
                     {title}
                   </h2>
+
                   {description ? (
-                    <p id={descriptionId} className="mt-1 text-body-small text-fg-subtle">
+                    <p id={descriptionId} className={cn('mt-1 text-body-small', palette.text)}>
                       {description}
                     </p>
                   ) : null}
                 </div>
+
                 {!hideCloseButton ? (
                   <IconButton
                     icon={<X />}
@@ -112,17 +186,29 @@ export function Drawer({
                     size="sm"
                     onClick={onClose}
                     disabled={!dismissible}
-                    className="-me-1.5 -mt-1 w-8"
+                    className={cn('-me-1.5 -mt-1 w-8', palette.close)}
                   />
                 ) : null}
               </div>
 
-              <div className="min-h-0 flex-1 overflow-y-auto p-5 text-body text-fg-secondary">
+              <div
+                className={cn(
+                  'scrollbar-subtle min-h-0 flex-1 overflow-y-auto overscroll-contain p-5 text-body',
+                  palette.text,
+                  tone === 'sidebar' && 'scrollbar-sidebar',
+                )}
+              >
                 {children}
               </div>
 
               {footer ? (
-                <div className="flex shrink-0 flex-wrap gap-3 border-t border-border-subtle p-5">
+                <div
+                  className={cn(
+                    'flex shrink-0 flex-wrap gap-3 border-t p-5',
+                    palette.divider,
+                    'pb-[max(1.25rem,env(safe-area-inset-bottom))]',
+                  )}
+                >
                   {footer}
                 </div>
               ) : null}

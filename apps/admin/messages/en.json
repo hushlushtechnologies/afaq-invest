@@ -72,5 +72,176 @@
     "offlineBanner": "You’re offline. Changes can’t be saved until your connection returns.",
     "noPermissionTitle": "You don’t have access to this",
     "noPermissionDescription": "Your role doesn’t include permission to view this page. If you need access, ask an administrator."
+  },
+
+  "navGroups": {
+    "modules": "Modules",
+    "overview": "Overview",
+    "investment": "Investment",
+    "operations": "Operations",
+    "system": "System"
+  },
+  "shell": {
+    "skipToContent": "Skip to content",
+
+    "preferences": "Preferences",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu",
+    "adminPortal": "Admin Portal",
+    "needHelp": "Need help?",
+    "poweredBy": "Powered by Hush Lush Technologies",
+    "environment": {
+      "development": "Development",
+      "staging": "Staging",
+      "production": "Production"
+    }
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search investors, companies…",
+    "open": "Open search",
+    "close": "Close search",
+    "recent": "Recent searches",
+    "clearRecent": "Clear",
+    "modules": "Go to module",
+    "noModules": "No module matches “{query}”.",
+    "recordsNote": "Investors, companies and payments become searchable as those modules are built.",
+    "hintNavigate": "to move",
+    "hintSelect": "to open",
+    "hintClose": "to close"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "open": "Notifications",
+    "openWithCount": "Notifications, {count} unread",
+    "unread": "Unread",
+    "markAllRead": "Mark all read",
+    "clearAll": "Clear all",
+    "viewAll": "View all notifications",
+    "restoreSamples": "Restore sample notifications",
+    "empty": {
+      "title": "You’re all caught up",
+      "description": "New activity across investors, payments and compliance appears here."
+    },
+    "samples": {
+      "kycSubmitted": "Fatima Hassan submitted KYC documents for review",
+      "investmentRequest": "New investment request of AED 250,000 for Emerald Tower",
+      "paymentFailed": "A scheduled payment from Omar Khalid could not be processed",
+      "distributionApproved": "Q1 distribution approved for Marina Residences",
+      "reportReady": "Your quarterly performance report is ready to download",
+      "opportunityFunded": "Al Jaddaf Offices reached 100% funding"
+    }
+  },
+  "profile": {
+    "title": "Account",
+    "openMenu": "Account menu for {name}",
+    "close": "Close account menu",
+    "myProfile": "My profile",
+    "security": "Security",
+    "preferences": "Preferences",
+    "signOut": "Sign out",
+    "signOutTitle": "Sign out of Afaq Invest?",
+    "signOutMessage": "You will need to sign in again to continue working. Signing out is connected to the real session in Sprint 3.",
+    "placeholderNote": "Profile, security and preference pages are built in a later phase."
+  },
+  "moduleTabs": {
+    "sectionsOf": "{module} sections",
+    "investorsDescription": "Investor records, verification and compliance checks.",
+    "financeDescription": "Payments, ledger entries, distributions and reconciliation.",
+    "investors": {
+      "all": "All investors",
+      "kyc": "KYC",
+      "compliance": "Compliance"
+    },
+    "finance": {
+      "payments": "Payments",
+      "ledger": "Ledger",
+      "distributions": "Distributions",
+      "reconciliation": "Reconciliation"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Your account, your preferences and how Afaq Invest is set up.",
+    "comingInSprint3": "Sprint 3",
+    "editableNote": "Editing your profile is connected to the real account in Sprint 3.",
+    "sections": {
+      "profile": {
+        "title": "My profile",
+        "description": "How you appear to colleagues across the platform.",
+        "name": "Full name",
+        "email": "Email address",
+        "role": "Role",
+        "changePhoto": "Change photo"
+      },
+      "security": {
+        "title": "Security",
+        "description": "Sign-in, verification and active sessions.",
+        "password": {
+          "title": "Password",
+          "description": "Change the password you use to sign in.",
+          "action": "Change"
+        },
+        "twoFactor": {
+          "title": "Two-factor verification",
+          "description": "Ask for a second step when signing in from a new device.",
+          "action": "Set up"
+        },
+        "sessions": {
+          "title": "Active sessions",
+          "description": "See where you are signed in and end sessions you don’t recognise.",
+          "action": "Review"
+        },
+        "note": "Security settings are connected to the real account in Sprint 3."
+      },
+      "preferences": {
+        "title": "Preferences",
+        "description": "How the platform looks and which language it uses.",
+        "theme": "Theme",
+        "themeDescription": "Light, dark, or follow your device.",
+        "language": "Language",
+        "languageDescription": "Available in {languages}."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Choose what you are told about, and where.",
+        "note": "These switches work here, but saving them to your account is part of a later sprint.",
+        "channels": { "inApp": "In app", "email": "Email" },
+        "topics": {
+          "kyc": {
+            "title": "KYC and verification",
+            "description": "Documents submitted, approved or rejected."
+          },
+          "payments": {
+            "title": "Payments",
+            "description": "Received, failed and scheduled payments."
+          },
+          "investments": {
+            "title": "Investments",
+            "description": "New requests and funding milestones."
+          },
+          "reports": { "title": "Reports", "description": "Scheduled reports ready to download." }
+        }
+      },
+      "organisation": {
+        "title": "Organisation",
+        "description": "Company details, team and branding.",
+        "adminOnly": "Only administrators can change these settings. Permissions are enforced in Sprint 3.",
+        "details": {
+          "title": "Company details",
+          "description": "Legal name, trade licence and registered address."
+        },
+        "team": {
+          "title": "Team and roles",
+          "description": "Who can sign in, and what each role may do."
+        },
+        "branding": {
+          "title": "Branding",
+          "description": "Logo and colours used on investor-facing documents."
+        }
+      }
+    }
   }
 }

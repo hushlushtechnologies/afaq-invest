@@ -119,7 +119,7 @@ export function TabList({ children, label, className }: TabListProps): ReactNode
       onKeyDown={handleKeyDown}
       className={cn(
         // Scrolls sideways on narrow screens instead of wrapping.
-        'flex max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        'scrollbar-hidden flex max-w-full overflow-x-auto',
         variant === 'underline'
           ? 'gap-1 border-b border-border'
           : 'w-fit gap-1 rounded-xl bg-background-subtle p-1',

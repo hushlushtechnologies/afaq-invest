@@ -46,14 +46,15 @@ export function LanguageSwitcher({
           <button
             type="button"
             disabled={pending}
-            className="inline-flex h-9.5 items-center gap-2 rounded-lg border border-border bg-surface px-3 text-body-small text-fg-secondary transition-colors outline-none hover:bg-surface-hover hover:text-fg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
+            className="inline-flex h-10 items-center gap-2 rounded-lg border border-border bg-surface px-3 text-body-small text-fg-secondary transition-colors outline-none hover:bg-surface-hover hover:text-fg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
           >
-            <Globe className="size-4" aria-hidden="true" />
+            <Globe className="size-3" aria-hidden="true" />
             {LOCALES[locale].nativeLabel}
           </button>
         ) : (
           <IconButton
             icon={<Globe />}
+            size="sm"
             label={t('changeLanguage')}
             variant="outline"
             disabled={pending}

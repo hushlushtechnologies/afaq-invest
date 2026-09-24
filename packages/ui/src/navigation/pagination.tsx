@@ -68,6 +68,7 @@ export interface PaginationProps {
   pageSize?: number;
   labels?: Partial<PaginationLabels>;
   className?: string;
+  label?: string;
 }
 
 const PAGE_BUTTON = cn(

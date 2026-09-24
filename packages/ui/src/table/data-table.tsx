@@ -271,7 +271,7 @@ export function DataTable<TData extends RowData>({
   return (
     <div
       className={cn(
-        'min-w-0 overflow-hidden rounded-xl border border-border bg-surface',
+        'relative min-w-0 overflow-hidden rounded-xl border border-border bg-surface',
         className,
       )}
     >
@@ -500,7 +500,7 @@ export function DataTable<TData extends RowData>({
             onPageChange={(page) => table.setPageIndex(page - 1)}
             totalItems={matchingCount}
             pageSize={currentPageSize}
-            labels={text.pagination}
+            label={`${caption} — ${text.rowsPerPage}`}
           />
         </div>
       ) : null}

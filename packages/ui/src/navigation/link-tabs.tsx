@@ -43,7 +43,7 @@ export function LinkTabs({
   return (
     <nav aria-label={label} className={className}>
       <LayoutGroup id={groupId}>
-        <ul className="flex max-w-full gap-1 overflow-x-auto border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <ul className="scrollbar-hidden flex max-w-full gap-1 overflow-x-auto border-b border-border">
           {items.map((item) => {
             const active = item.href === activeHref;
             return (

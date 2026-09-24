@@ -3,6 +3,26 @@
    ========================================================================== */
 
 /* Hidden until focused — for "skip to content" style links. */
+
+/* ==========================================================================
+   NO SIDEWAYS SCROLLING
+   The app is a fixed-height shell: each region scrolls inside itself, so the
+   page as a whole should never scroll sideways. `clip` rather than `hidden`
+   because `hidden` would turn <body> into a scroll container and break
+   sticky headers inside it.
+   ========================================================================== */
+
+html,
+body {
+  overflow-x: clip;
+}
+
+html,
+body,
+* {
+  scroll-behavior: auto !important;
+}
+
 @utility sr-only-focusable {
   position: absolute;
   width: 1px;
