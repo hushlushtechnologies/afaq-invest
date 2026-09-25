@@ -108,10 +108,7 @@ export function NotificationsList({ onNavigate }: { onNavigate?: () => void }): 
                 'focus-visible:ring-primary/25',
 
                 // Unread
-                !item.read && [
-                  'bg-primary/[0.035]',
-                  'shadow-[inset_0_0_0_1px_oklch(1_0_0_/_0.025)]',
-                ],
+                !item.read && ['bg-primary/[0.035]', 'shadow-[inset_0_0_0_1px_oklch(1_0_0/0.025)]'],
               )}
             >
               {/* Ambient glow for unread notifications */}
@@ -120,7 +117,7 @@ export function NotificationsList({ onNavigate }: { onNavigate?: () => void }): 
                   aria-hidden="true"
                   className={cn(
                     'pointer-events-none absolute',
-                    '-start-8 -top-8',
+                    '-inset-s-8 -top-8',
                     'size-20 rounded-full blur-2xl',
                     'opacity-70',
                     tone.glow,
@@ -142,7 +139,7 @@ export function NotificationsList({ onNavigate }: { onNavigate?: () => void }): 
                   tone.container,
                 )}
               >
-                <Icon className={cn('size-[17px]', tone.icon)} />
+                <Icon className={cn('size-4.25', tone.icon)} />
               </span>
 
               {/* Content */}

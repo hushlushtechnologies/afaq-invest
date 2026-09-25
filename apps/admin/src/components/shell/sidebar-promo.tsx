@@ -30,11 +30,11 @@ export function SidebarPromo({ collapsed = false }: SidebarPromoProps): ReactNod
           'group relative mx-auto flex size-10 items-center justify-center',
           'rounded-xl border border-sidebar-border/80',
           'bg-sidebar-surface/80 backdrop-blur-md',
-          'shadow-[0_8px_20px_-10px_oklch(0_0_0_/_0.7)]',
+          'shadow-[0_8px_20px_-10px_oklch(0_0_0/0.7)]',
           'outline-none',
           'transition-[border-color,box-shadow] duration-200',
           'hover:border-sidebar-active/30',
-          'hover:shadow-[0_10px_24px_-10px_oklch(0_0_0_/_0.8)]',
+          'hover:shadow-[0_10px_24px_-10px_oklch(0_0_0/0.8)]',
           'focus-visible:ring-2 focus-visible:ring-sidebar-active',
         )}
       >
@@ -67,22 +67,22 @@ export function SidebarPromo({ collapsed = false }: SidebarPromoProps): ReactNod
         'group relative block overflow-hidden',
         'rounded-2xl border border-sidebar-border/80',
         'bg-sidebar-surface/75 p-3 backdrop-blur-md',
-        'shadow-[0_12px_30px_-16px_oklch(0_0_0_/_0.8)]',
+        'shadow-[0_12px_30px_-16px_oklch(0_0_0/0.8)]',
         'outline-none',
         'transition-[border-color,box-shadow] duration-200',
         'hover:border-sidebar-active/25',
-        'hover:shadow-[0_16px_34px_-16px_oklch(0_0_0_/_0.85)]',
+        'hover:shadow-[0_16px_34px_-16px_oklch(0_0_0/0.85)]',
         'focus-visible:ring-2 focus-visible:ring-sidebar-active',
       )}
     >
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -end-8 -top-8 size-20 rounded-full bg-sidebar-active/10 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute -inset-e-8 -top-8 size-20 rounded-full bg-sidebar-active/10 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
       />
 
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute start-2 top-5 size-10 rounded-full bg-[#F7D726]/10 blur-xl transition-opacity duration-300 group-hover:bg-[#F7D726]/20"
+        className="pointer-events-none absolute inset-s-2 top-5 size-10 rounded-full bg-[#F7D726]/10 blur-xl transition-opacity duration-300 group-hover:bg-[#F7D726]/20"
       />
 
       <div className="relative">

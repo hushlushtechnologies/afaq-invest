@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -14,6 +15,12 @@ import { RequirePermissions } from '../auth/permissions.decorator.js';
 import type { StaffContext } from '../auth/staff-context.types.js';
 import { InviteStaffDto } from './dto/invite-staff.dto.js';
 import { ListStaffDto } from './dto/list-staff.dto.js';
+import {
+  UpdateStaffDto,
+  UpdateStaffRolesDto,
+  UpdateStaffStatusDto,
+} from './dto/update-staff.dto.js';
+import { StaffManagementService } from './staff-management.service.js';
 import { StaffInvitationsService } from './staff-invitations.service.js';
 import { StaffService } from './staff.service.js';
 
@@ -23,6 +30,7 @@ export class StaffController {
   constructor(
     private readonly staff: StaffService,
     private readonly invitations: StaffInvitationsService,
+    private readonly management: StaffManagementService,
   ) {}
 
   @Get()
@@ -56,5 +64,44 @@ export class StaffController {
   // database, so a malformed value is a clean 400 rather than a query error.
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<StaffListItem> {
     return this.staff.findOne(id);
+  }
+
+  @Patch(':id')
+  @RequirePermissions('staff.edit')
+  @ApiOperation({ summary: "Change a staff member's details" })
+  @ApiOkResponse({ description: 'Updated' })
+  updateDetails(
+    @CurrentStaff() actor: StaffContext,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: UpdateStaffDto,
+  ): Promise<{ id: string }> {
+    return this.management.updateDetails(actor, id, body);
+  }
+
+  /** Assigning roles is separate from editing details: it is a different power. */
+  @Patch(':id/roles')
+  @RequirePermissions('staff.manage')
+  @ApiOperation({ summary: "Replace a staff member's roles" })
+  @ApiOkResponse({ description: 'Updated' })
+  @ApiForbiddenResponse({ description: 'Granting more than you hold' })
+  updateRoles(
+    @CurrentStaff() actor: StaffContext,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: UpdateStaffRolesDto,
+  ): Promise<{ id: string }> {
+    return this.management.updateRoles(actor, id, body);
+  }
+
+  @Patch(':id/status')
+  @RequirePermissions('staff.manage')
+  @ApiOperation({ summary: 'Suspend, disable or reactivate a staff member' })
+  @ApiOkResponse({ description: 'Updated' })
+  @ApiBadRequestResponse({ description: 'Not allowed: yourself, or the last Super Admin' })
+  updateStatus(
+    @CurrentStaff() actor: StaffContext,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: UpdateStaffStatusDto,
+  ): Promise<{ id: string }> {
+    return this.management.updateStatus(actor, id, body);
   }
 }

@@ -17,6 +17,7 @@ type PendingAction = 'others' | 'global' | null;
  */
 export function SessionActions(): ReactNode {
   const t = useTranslations('settings.sections.security.sessions');
+  const tActions = useTranslations('actions');
   const { signOut } = useSignOut();
   const [confirming, setConfirming] = useState<PendingAction>(null);
   const [signedOutOthers, setSignedOutOthers] = useState(false);
@@ -71,6 +72,8 @@ export function SessionActions(): ReactNode {
         title={confirming === 'global' ? t('confirmEverywhereTitle') : t('confirmOthersTitle')}
         message={confirming === 'global' ? t('confirmEverywhereBody') : t('confirmOthersBody')}
         confirmLabel={confirming === 'global' ? t('signOutEverywhere') : t('signOutOthers')}
+
+        cancelLabel={tActions('cancel')}
       />
     </>
   );

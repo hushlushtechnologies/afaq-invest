@@ -1,3 +1,4 @@
+import type { Locale } from './locale';
 import type { PermissionKey } from './rbac';
 import type { StaffStatus } from './rbac';
 
@@ -54,6 +55,7 @@ export interface StaffListItem {
   fullName: string;
   jobTitle: string | null;
   status: StaffStatus;
+  preferredLocale: Locale;
   roles: StaffRoleSummary[];
   /** ISO timestamps, or null where it has not happened yet. */
   lastLoginAt: string | null;

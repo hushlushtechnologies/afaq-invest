@@ -31,7 +31,7 @@ export function SidebarSocials(): ReactNode {
         'border border-sidebar-border/70',
         'bg-sidebar-surface/70',
         'p-1',
-        'shadow-[0_8px_24px_-12px_oklch(0_0_0_/_0.7)]',
+        'shadow-[0_8px_24px_-12px_oklch(0_0_0/0.7)]',
         'backdrop-blur-md',
       )}
     >

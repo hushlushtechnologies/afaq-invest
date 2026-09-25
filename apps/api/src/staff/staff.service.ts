@@ -12,6 +12,7 @@ interface StaffRow {
   fullName: string;
   jobTitle: string | null;
   status: string;
+  preferredLocale: string;
   lastLoginAt: Date | null;
   lastSeenAt: Date | null;
   invitationExpiresAt: Date | null;
@@ -93,6 +94,7 @@ const STAFF_SELECT = {
   fullName: true,
   jobTitle: true,
   status: true,
+  preferredLocale: true,
   lastLoginAt: true,
   lastSeenAt: true,
   invitationExpiresAt: true,
@@ -107,6 +109,7 @@ function toListItem(row: StaffRow): StaffListItem {
     fullName: row.fullName,
     jobTitle: row.jobTitle,
     status: row.status as StaffListItem['status'],
+    preferredLocale: row.preferredLocale as StaffListItem['preferredLocale'],
     roles: row.roles.map((entry) => entry.role),
     lastLoginAt: row.lastLoginAt?.toISOString() ?? null,
     lastSeenAt: row.lastSeenAt?.toISOString() ?? null,

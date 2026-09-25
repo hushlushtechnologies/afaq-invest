@@ -1,20 +1,20 @@
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
-import { InfoCard } from '@afaq/ui';
 import { ModulePage } from '@/components/shell/module-page';
+import { RolesDirectory } from '@/components/roles/roles-directory';
 
-/** Built in Phase 19; the tab exists so the section is reachable. */
+/**
+ * Administration → Roles & permissions.
+ *
+ * The page renders on the server; the directory needs the browser to fetch
+ * roles and open the detail drawer.
+ */
 export default async function AdministrationRolesPage(): Promise<ReactNode> {
-  const t = await getTranslations('moduleTabs');
-  const tc = await getTranslations('common');
+  const t = await getTranslations('roles');
 
   return (
-    <ModulePage
-      module="administration"
-      title={t('administration.roles')}
-      description={t('administrationDescription')}
-    >
-      <InfoCard tone="neutral">{tc('placeholder')}</InfoCard>
+    <ModulePage module="administration" title={t('title')} description={t('description')}>
+      <RolesDirectory />
     </ModulePage>
   );
 }

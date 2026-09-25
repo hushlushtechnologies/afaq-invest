@@ -4,13 +4,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState, type ReactNode } from 'react';
 import { UserPlus } from 'lucide-react';
 
-import {
-  STAFF_STATUSES,
-  SYSTEM_ROLES,
-  type Locale,
-  type StaffListItem,
-  type StaffListQuery,
-} from '@afaq/types';
+import { STAFF_STATUSES, type Locale, type StaffListItem, type StaffListQuery } from '@afaq/types';
+
 import {
   Badge,
   Button,
@@ -24,8 +19,12 @@ import { formatDate, formatRelativeTime } from '@afaq/utils';
 import { Can } from '@/components/auth/can';
 
 import { useDataTableLabels, useTableToolbarLabels } from '@/lib/i18n/use-component-labels';
+import { useRoles } from '@/lib/roles/use-roles';
 import { useStaffList } from '@/lib/staff/use-staff-list';
+import { EditRolesDrawer } from './edit-roles-drawer';
+import { EditStaffDrawer } from './edit-staff-drawer';
 import { InviteStaffDrawer } from './invite-staff-drawer';
+import { StaffRowActions } from './staff-row-actions';
 
 import { StaffStatusBadge } from './staff-status-badge';
 
@@ -47,6 +46,10 @@ export function StaffTable(): ReactNode {
   const [query, setQuery] = useState<StaffListQuery>({ page: 1, pageSize: 25 });
   const [search, setSearch] = useState('');
   const [inviting, setInviting] = useState(false);
+  const [editing, setEditing] = useState<StaffListItem | null>(null);
+  // Roles come from the API so custom roles appear in the filter too.
+  const { data: roles } = useRoles();
+  const [editingRoles, setEditingRoles] = useState<StaffListItem | null>(null);
   const { data, isPending, isError, refetch } = useStaffList({
     ...query,
     search: search || undefined,
@@ -114,6 +117,14 @@ export function StaffTable(): ReactNode {
           </span>
         ),
       }),
+      column.display({
+        id: 'actions',
+        header: '',
+        meta: { align: 'end' },
+        cell: ({ row }) => (
+          <StaffRowActions staff={row.original} onEdit={setEditing} onEditRoles={setEditingRoles} />
+        ),
+      }),
     ],
     [t, locale],
   );
@@ -128,7 +139,7 @@ export function StaffTable(): ReactNode {
           {
             id: 'role',
             label: t('filters.role'),
-            value: SYSTEM_ROLES.find((role) => role.key === query.role)?.name ?? query.role,
+            value: roles?.find((role) => role.key === query.role)?.name ?? query.role,
           },
         ]
       : []),
@@ -173,7 +184,7 @@ export function StaffTable(): ReactNode {
               className="h-8 rounded-lg border border-border bg-surface px-2.5 text-body-small text-fg-secondary outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="">{t('filters.allRoles')}</option>
-              {SYSTEM_ROLES.map((role) => (
+              {(roles ?? []).map((role) => (
                 <option key={role.key} value={role.key}>
                   {role.name}
                 </option>
@@ -217,6 +228,8 @@ export function StaffTable(): ReactNode {
         pageSizeOptions={[10, 25, 50]}
       />
       <InviteStaffDrawer open={inviting} onClose={() => setInviting(false)} />
+      <EditStaffDrawer staff={editing} onClose={() => setEditing(null)} />
+      <EditRolesDrawer staff={editingRoles} onClose={() => setEditingRoles(null)} />
     </div>
   );
 }

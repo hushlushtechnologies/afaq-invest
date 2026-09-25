@@ -25,6 +25,7 @@ import { useSignOut } from '@/lib/auth/use-sign-out';
  */
 export function ProfileMenu(): ReactNode {
   const t = useTranslations('profile');
+  const tActions = useTranslations('actions');
   const [open, setOpen] = useState(false);
   const [confirmSignOut, setConfirmSignOut] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -79,6 +80,8 @@ export function ProfileMenu(): ReactNode {
       title={t('signOutTitle')}
       message={t('signOutMessage')}
       confirmLabel={t('signOut')}
+
+      cancelLabel={tActions('cancel')}
     />
   );
 

@@ -35,16 +35,16 @@ export function Topbar(): ReactNode {
           'border border-border/60',
           'bg-background/75',
           'px-2',
-          'shadow-[0_12px_40px_-24px_oklch(0_0_0_/_0.35)]',
+          'shadow-[0_12px_40px_-24px_oklch(0_0_0/0.35)]',
           'backdrop-blur-xl',
-          'supports-[backdrop-filter]:bg-background/60',
+          'supports-backdrop-filter:bg-background/60',
         )}
       >
         {/* Ambient brand glow */}
         <span
           aria-hidden="true"
           className={cn(
-            'pointer-events-none absolute -start-10 -top-10',
+            'pointer-events-none absolute -inset-s-10 -top-10',
             'size-24 rounded-full',
             'bg-primary/5 blur-3xl',
           )}

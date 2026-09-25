@@ -1,12 +1,12 @@
 import {
   BadRequestException,
   ConflictException,
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { assertMayGrantRoles, type RoleWithPermissions } from './staff-policy.js';
 import { hasAllPermissions, SUPER_ADMIN_ROLE_KEY, type PermissionKey } from '@afaq/types';
 import type { PrismaTransactionClient } from '@afaq/database';
 import type { StaffContext } from '../auth/staff-context.types.js';
@@ -16,13 +16,6 @@ import type { InviteStaffDto } from './dto/invite-staff.dto.js';
 
 /** How long an invitation stays usable. */
 export const INVITATION_VALID_DAYS = 7;
-
-interface RoleRecord {
-  id: string;
-  key: string;
-  name: string;
-  permissions: Array<{ permission: { key: string } }>;
-}
 
 /**
  * Inviting staff.
@@ -44,7 +37,7 @@ export class StaffInvitationsService {
 
   async invite(actor: StaffContext, input: InviteStaffDto): Promise<{ id: string }> {
     const roles = await this.resolveRoles(input.roleKeys);
-    this.assertMayGrant(actor, roles);
+    assertMayGrantRoles(actor, roles);
     await this.assertNotAlreadyStaff(input.email);
 
     const locale = input.preferredLocale ?? 'en';
@@ -153,10 +146,10 @@ export class StaffInvitationsService {
   }
 
   /** Every requested role must exist; an unknown key is a mistake, not a silent skip. */
-  private async resolveRoles(roleKeys: string[]): Promise<RoleRecord[]> {
+  private async resolveRoles(roleKeys: string[]): Promise<RoleWithPermissions[]> {
     const unique = [...new Set(roleKeys)];
 
-    const roles: RoleRecord[] = await this.prisma.db.role.findMany({
+    const roles: RoleWithPermissions[] = await this.prisma.db.role.findMany({
       where: { key: { in: unique } },
       select: {
         id: true,
@@ -186,27 +179,6 @@ export class StaffInvitationsService {
    * sign in as them — a complete bypass of every other permission. Super
    * Admins are exempt, since they already hold everything.
    */
-  private assertMayGrant(actor: StaffContext, roles: RoleRecord[]): void {
-    if (actor.isSuperAdmin) return;
-
-    if (roles.some((role) => role.key === SUPER_ADMIN_ROLE_KEY)) {
-      throw new ForbiddenException({
-        reason: 'cannot_grant_super_admin',
-        message: 'Only a Super Admin can grant the Super Admin role.',
-      });
-    }
-
-    for (const role of roles) {
-      const permissions = role.permissions.map((link) => link.permission.key as PermissionKey);
-
-      if (!hasAllPermissions(actor, permissions)) {
-        throw new ForbiddenException({
-          reason: 'cannot_grant_role',
-          message: `You cannot grant "${role.name}": it includes permissions you do not hold.`,
-        });
-      }
-    }
-  }
 
   /** One person, one staff record — whatever state they are in. */
   private async assertNotAlreadyStaff(email: string): Promise<void> {

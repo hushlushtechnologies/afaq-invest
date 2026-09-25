@@ -50,7 +50,7 @@ export default async function AuthLayout({
 
       {/* --- form --------------------------------------------------------- */}
       <section className="relative flex flex-1 items-center justify-center px-5 py-10 sm:px-8">
-        <div className="absolute end-4 top-4 flex items-center gap-2">
+        <div className="absolute inset-e-4 top-4 flex items-center gap-2">
           <AuthControls />
         </div>
 

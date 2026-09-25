@@ -31,7 +31,7 @@ export function NotificationsMenu(): ReactNode {
     unreadCount > 0 ? (
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute end-1 top-1 z-raised flex min-w-4 justify-center rounded-full bg-danger px-1 text-[0.625rem] leading-4 text-numeric font-medium text-status-foreground ring-2 ring-background"
+        className="pointer-events-none absolute inset-e-1 top-1 z-raised flex min-w-4 justify-center rounded-full bg-danger px-1 text-[0.625rem] leading-4 text-numeric font-medium text-status-foreground ring-2 ring-background"
       >
         {unreadCount > 9 ? '9+' : unreadCount}
       </span>

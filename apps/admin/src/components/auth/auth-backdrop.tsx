@@ -33,11 +33,11 @@ export function AuthBackdrop(): ReactNode {
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
       <motion.span
         animate={drift([0, 40, -20, 0], [0, -30, 20, 0], 26)}
-        className="absolute -start-20 -top-24 size-[28rem] rounded-full bg-primary/25 blur-[120px]"
+        className="absolute -inset-s-20 -top-24 size-112 rounded-full bg-primary/25 blur-[120px]"
       />
       <motion.span
         animate={drift([0, -30, 25, 0], [0, 25, -15, 0], 32)}
-        className="absolute end-0 -bottom-32 size-[32rem] rounded-full bg-accent/12 blur-[140px]"
+        className="absolute inset-e-0 -bottom-32 size-128 rounded-full bg-accent/12 blur-[140px]"
       />
       {/* A faint grid gives the blur something to sit against. */}
       <span
