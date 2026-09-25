@@ -4,8 +4,9 @@ import { LayoutGroup } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useId, type ReactNode } from 'react';
 import { LinkTabs, NavItem } from '@afaq/ui';
-import { SETTINGS_SECTIONS, findSettingsSection } from '@/config/settings-nav';
+import { findSettingsSection } from '@/config/settings-nav';
 import { Link, usePathname } from '@/i18n/navigation';
+import { useVisibleSettingsSections } from '@/lib/navigation/use-visible-sections';
 
 /**
  * Settings navigation. A vertical list beside the content on desktop, where
@@ -17,14 +18,20 @@ export function SettingsNav(): ReactNode {
   const pathname = usePathname();
   const groupId = useId();
   const active = findSettingsSection(pathname);
-  const activeHref = active?.href ?? SETTINGS_SECTIONS[0]!.href;
+  const { sections, loading } = useVisibleSettingsSections();
+
+  // Profile is always present, so there is always a first section once the
+  // permissions are known.
+  if (loading || sections.length === 0) return null;
+
+  const activeHref = active?.href ?? sections[0]!.href;
 
   return (
     <>
       <nav aria-label={t('title')} className="hidden lg:block">
         <LayoutGroup id={groupId}>
           <ul className="flex flex-col gap-1">
-            {SETTINGS_SECTIONS.map((section) => (
+            {sections.map((section) => (
               <li key={section.key}>
                 <NavItem
                   href={section.href}
@@ -45,7 +52,7 @@ export function SettingsNav(): ReactNode {
         label={t('title')}
         activeHref={activeHref}
         linkComponent={Link}
-        items={SETTINGS_SECTIONS.map((section) => ({
+        items={sections.map((section) => ({
           href: section.href,
           label: t(`sections.${section.key}.title`),
           icon: <section.icon />,

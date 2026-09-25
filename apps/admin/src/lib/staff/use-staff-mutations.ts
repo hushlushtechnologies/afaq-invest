@@ -72,6 +72,17 @@ export function useUpdateStaffRoles(): UseMutationResult<{ id: string }, Error, 
   });
 }
 
+/** Sends an invitation again and restarts its seven-day clock. */
+export function useResendInvitation(): UseMutationResult<{ id: string }, Error, string> {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) =>
+      getApiClient().post<{ id: string }>(`/staff/${id}/resend-invitation`, {}),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [STAFF_QUERY_KEY] }),
+  });
+}
+
 /**
  * Update a staff member's status.
  *

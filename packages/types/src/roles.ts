@@ -23,6 +23,7 @@ export interface RoleListItem {
    */
   isSuperAdmin: boolean;
   permissionCount: number;
+  permissionKeys: PermissionKey[];
   /** How many staff currently hold this role, in any status. */
   staffCount: number;
   createdAt: string;
@@ -30,9 +31,8 @@ export interface RoleListItem {
 }
 
 /** A role with the permissions it actually carries. */
-export interface RoleDetail extends RoleListItem {
-  permissionKeys: PermissionKey[];
-}
+/** A role, for the detail view. Same shape today; kept for clarity at call sites. */
+export type RoleDetail = RoleListItem;
 
 /** One permission in the catalogue. */
 export interface PermissionListItem {

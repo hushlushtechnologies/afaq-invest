@@ -13,12 +13,14 @@ import {
   UserCog,
   type LucideIcon,
 } from 'lucide-react';
+import type { PermissionKey } from '@afaq/types';
 
 /**
  * The Admin sidebar, in one place. Every module has:
  * - href    the address, without the language prefix (/en is added by Link)
  * - key     the translation key under `nav` in the message files
  * - icon    a Lucide icon
+ * - permissions  what it takes to see it — holding ANY one is enough
  *
  * Groups keep twelve modules readable; their titles come from `navGroups`.
  */
@@ -38,6 +40,15 @@ export interface NavModule {
     | 'settings';
   href: string;
   icon: LucideIcon;
+  /**
+   * Holding any one of these reveals the module.
+   *
+   * "Any" rather than "all" because a module is a doorway to several screens:
+   * somebody who can see investment requests but not the rules still needs
+   * the Investments entry. Omitted means everyone sees it — true only of the
+   * dashboard, personal settings and support, which belong to no resource.
+   */
+  permissions?: readonly PermissionKey[];
 }
 
 export interface NavGroup {
@@ -51,34 +62,53 @@ export const NAV_GROUPS: readonly NavGroup[] = [
   {
     key: 'overview',
     showTitle: false,
-    items: [{ key: 'dashboard', href: '/dashboard', icon: LayoutDashboard }],
+    items: [
+      {
+        key: 'dashboard',
+        href: '/dashboard',
+        icon: LayoutDashboard,
+        permissions: ['dashboard.view'],
+      },
+    ],
   },
   {
     key: 'investment',
     showTitle: true,
     items: [
-      { key: 'investors', href: '/investors', icon: Users },
-      { key: 'companies', href: '/companies', icon: Building2 },
-      { key: 'partners', href: '/partners', icon: Handshake },
-      { key: 'investments', href: '/investments', icon: PieChart },
+      { key: 'investors', href: '/investors', icon: Users, permissions: ['investor.view'] },
+      { key: 'companies', href: '/companies', icon: Building2, permissions: ['company.view'] },
+      { key: 'partners', href: '/partners', icon: Handshake, permissions: ['partner.view'] },
+      {
+        key: 'investments',
+        href: '/investments',
+        icon: PieChart,
+        permissions: ['opportunity.view', 'investment_rule.view', 'investment_request.view'],
+      },
     ],
   },
   {
     key: 'operations',
     showTitle: true,
     items: [
-      { key: 'finance', href: '/finance', icon: Banknote },
-      { key: 'compliance', href: '/compliance', icon: ShieldCheck },
-      { key: 'documents', href: '/documents', icon: FileText },
-      { key: 'reports', href: '/reports', icon: ScrollText },
+      { key: 'finance', href: '/finance', icon: Banknote, permissions: ['finance.view'] },
+      { key: 'compliance', href: '/compliance', icon: ShieldCheck, permissions: ['kyc.view'] },
+      { key: 'documents', href: '/documents', icon: FileText, permissions: ['document.view'] },
+      { key: 'reports', href: '/reports', icon: ScrollText, permissions: ['report.view'] },
     ],
   },
   {
     key: 'system',
     showTitle: true,
     items: [
+      // Support belongs to no resource — anyone can reach help.
       { key: 'support', href: '/support', icon: LifeBuoy },
-      { key: 'administration', href: '/administration', icon: UserCog },
+      {
+        key: 'administration',
+        href: '/administration',
+        icon: UserCog,
+        permissions: ['staff.view', 'role.view', 'audit.view'],
+      },
+      // Personal settings — everyone has their own to manage.
       { key: 'settings', href: '/settings', icon: Settings },
     ],
   },

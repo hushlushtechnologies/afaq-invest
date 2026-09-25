@@ -5,9 +5,10 @@ import { ShieldCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
 import { SYSTEM_ROLES, type StaffListItem } from '@afaq/types';
-import { Button, Checkbox, Drawer, FormDescription, InfoCard } from '@afaq/ui';
-import { usePermissions } from '@/lib/auth/use-permissions';
 import { useUpdateStaffRoles } from '@/lib/staff/use-staff-mutations';
+import { Button, Checkbox, Drawer, FormDescription, InfoCard, LoadingState } from '@afaq/ui';
+import { usePermissions } from '@/lib/auth/use-permissions';
+import { useRoles } from '@/lib/roles/use-roles';
 
 /**
  * Changing what someone is allowed to do.
@@ -26,7 +27,7 @@ export function EditRolesDrawer({
   const t = useTranslations('staff.roles');
   const { canAll, isSuperAdmin, staff: me } = usePermissions();
   const update = useUpdateStaffRoles();
-
+  const { data: roles, isPending: rolesLoading } = useRoles();
   const [selected, setSelected] = useState<string[]>([]);
   const [failure, setFailure] = useState<string | null>(null);
   const [openedFor, setOpenedFor] = useState<string | null>(null);
@@ -41,10 +42,9 @@ export function EditRolesDrawer({
     setFailure(null);
   }
 
-  const grantable = SYSTEM_ROLES.filter(
-    (role) => isSuperAdmin || (role.key !== 'SUPER_ADMIN' && canAll([...role.permissions])),
+  const grantable = (roles ?? []).filter(
+    (role) => isSuperAdmin || (!role.isSuperAdmin && canAll(role.permissionKeys)),
   );
-
   // A role they already hold but we could not grant is shown, ticked and
   // locked: hiding it would make "save" quietly strip it.
   const lockedRoles = (staff?.roles ?? []).filter(
@@ -52,6 +52,18 @@ export function EditRolesDrawer({
   );
 
   const isSelf = me?.staffUserId === staff?.id;
+
+  // The two rules the API will enforce on save, said before they get there.
+  const keepsOwnAccess =
+    !isSelf ||
+    isSuperAdmin ||
+    selected.includes('SUPER_ADMIN') ||
+    grantable.some(
+      (role) =>
+        selected.includes(role.key) &&
+        (role.permissionKeys as readonly string[]).includes('staff.manage'),
+    ) ||
+    lockedRoles.length > 0;
 
   async function save(): Promise<void> {
     if (!staff) return;
@@ -87,7 +99,7 @@ export function EditRolesDrawer({
             variant="primary"
             iconStart={<ShieldCheck />}
             loading={update.isPending}
-            disabled={selected.length === 0 && lockedRoles.length === 0}
+            disabled={(selected.length === 0 && lockedRoles.length === 0) || !keepsOwnAccess}
             onClick={save}
           >
             {t('save')}
@@ -96,13 +108,11 @@ export function EditRolesDrawer({
       }
     >
       <div className="space-y-5">
-        {failure ? (
-          <InfoCard tone="danger" announce>
-            {failure}
-          </InfoCard>
-        ) : null}
+        {rolesLoading ? <LoadingState /> : null}
 
         {isSelf ? <InfoCard tone="warning">{t('editingSelf')}</InfoCard> : null}
+
+        {!keepsOwnAccess ? <InfoCard tone="danger">{t('wouldLockYouOut')}</InfoCard> : null}
 
         <FormDescription>{t('help')}</FormDescription>
 
@@ -122,7 +132,7 @@ export function EditRolesDrawer({
             <Checkbox
               key={role.key}
               label={role.name}
-              description={role.description}
+              description={role.description ?? undefined}
               checked={selected.includes(role.key)}
               onChange={(event) =>
                 setSelected((current) =>

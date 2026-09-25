@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
+import { ALLOW_INVITED_KEY } from './allow-invited.decorator.js';
 import { IS_PUBLIC_KEY } from './public.decorator.js';
 import { StaffContextService } from './staff-context.service.js';
 import type { RequestWithStaff } from './current-staff.decorator.js';
@@ -12,6 +13,7 @@ import type { RequestWithStaff } from './current-staff.decorator.js';
  * with @Public(). Forgetting to protect something is therefore impossible;
  * the mistake you can make is opening something deliberately.
  */
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -34,8 +36,13 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException({ reason: 'missing_token', message: 'Sign in to continue.' });
     }
 
+    const allowInvited = this.reflector.getAllAndOverride<boolean>(ALLOW_INVITED_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
     // Anything wrong throws from here with the right status and reason.
-    request.staff = await this.staffContext.resolve(token);
+    request.staff = await this.staffContext.resolve(token, { allowInvited });
 
     return true;
   }

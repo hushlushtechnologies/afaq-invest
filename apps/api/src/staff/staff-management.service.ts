@@ -9,7 +9,9 @@ import type {
   UpdateStaffStatusDto,
 } from './dto/update-staff.dto.js';
 import {
+  assertKeepsOwnAccess,
   assertMayGrantRoles,
+  assertMayManageSuperAdmin,
   assertNotLastSuperAdmin,
   assertNotSelf,
   assertStatusTransition,
@@ -43,6 +45,12 @@ export class StaffManagementService {
     input: UpdateStaffDto,
   ): Promise<{ id: string }> {
     const target = await this.loadTarget(staffUserId);
+
+    assertMayManageSuperAdmin(
+      actor,
+      target.roles.some((entry) => entry.role.key === SUPER_ADMIN_ROLE_KEY),
+      'edit',
+    );
 
     const changes = {
       ...(input.fullName !== undefined ? { fullName: input.fullName } : {}),
@@ -106,6 +114,16 @@ export class StaffManagementService {
     // You may only grant what you hold — checked against the roles being
     // added, not the ones already there.
     assertMayGrantRoles(actor, roles);
+    assertMayManageSuperAdmin(actor, before.includes(SUPER_ADMIN_ROLE_KEY), 'change the roles of');
+
+    assertKeepsOwnAccess({
+      actor,
+      targetStaffUserId: staffUserId,
+      resultingRoleKeys: after,
+      resultingPermissions: roles.flatMap((role) =>
+        role.permissions.map((link) => link.permission.key),
+      ),
+    });
 
     const losingSuperAdmin =
       before.includes(SUPER_ADMIN_ROLE_KEY) && !after.includes(SUPER_ADMIN_ROLE_KEY);
@@ -160,6 +178,12 @@ export class StaffManagementService {
 
     const targetIsSuperAdmin = target.roles.some(
       (entry) => entry.role.key === SUPER_ADMIN_ROLE_KEY,
+    );
+
+    assertMayManageSuperAdmin(
+      actor,
+      targetIsSuperAdmin,
+      input.status === 'ACTIVE' ? 'reactivate' : 'close the account of',
     );
 
     // Only losing access matters; making someone active again never reduces

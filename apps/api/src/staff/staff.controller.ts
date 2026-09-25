@@ -20,6 +20,7 @@ import {
   UpdateStaffRolesDto,
   UpdateStaffStatusDto,
 } from './dto/update-staff.dto.js';
+import { InvitationLifecycleService } from './invitation-lifecycle.service.js';
 import { StaffManagementService } from './staff-management.service.js';
 import { StaffInvitationsService } from './staff-invitations.service.js';
 import { StaffService } from './staff.service.js';
@@ -31,6 +32,7 @@ export class StaffController {
     private readonly staff: StaffService,
     private readonly invitations: StaffInvitationsService,
     private readonly management: StaffManagementService,
+    private readonly lifecycle: InvitationLifecycleService,
   ) {}
 
   @Get()
@@ -103,5 +105,17 @@ export class StaffController {
     @Body() body: UpdateStaffStatusDto,
   ): Promise<{ id: string }> {
     return this.management.updateStatus(actor, id, body);
+  }
+
+  @Post(':id/resend-invitation')
+  @RequirePermissions('staff.create')
+  @ApiOperation({ summary: 'Send an invitation again and restart its clock' })
+  @ApiOkResponse({ description: 'Sent' })
+  @ApiBadRequestResponse({ description: 'They have already accepted, or sending failed' })
+  resendInvitation(
+    @CurrentStaff() actor: StaffContext,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<{ id: string }> {
+    return this.lifecycle.resend(actor, id);
   }
 }

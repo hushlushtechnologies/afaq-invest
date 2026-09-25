@@ -168,6 +168,30 @@
       "reconciliation": "Reconciliation"
     }
   },
+  "accessDenied": {
+    "title": "You don’t have access to this page",
+    "description": "Your roles don’t include permission for this. If you need it, ask an administrator to add the right role — they can see exactly what each role allows.",
+    "goToDashboard": "Go to dashboard",
+    "account": {
+      "signOut": "Sign out",
+      "not_staff": {
+        "title": "This account isn’t set up for the Admin Portal",
+        "description": "You signed in successfully, but there is no staff record for this email address. If you were expecting access, ask an administrator to invite you."
+      },
+      "suspended": {
+        "title": "Your access is suspended",
+        "description": "An administrator has paused this account. Your records and roles are intact — ask them to reactivate it when you’re ready to return."
+      },
+      "disabled": {
+        "title": "This account has been closed",
+        "description": "It no longer has access to the Admin Portal. If you think that’s a mistake, contact an administrator."
+      },
+      "invited": {
+        "title": "Finish setting up your account",
+        "description": "You’ve been invited but haven’t set a password yet. Open the invitation email and follow the link to finish — then sign in again."
+      }
+    }
+  },
 
   "auth": {
     "reset": {
@@ -191,6 +215,19 @@
         "3": "Good",
         "4": "Strong"
       }
+    },
+    "acceptInvitation": {
+      "title": "Welcome{name, select, other { {name}}}",
+      "subtitle": "Choose a password for {email} to finish setting up your account.",
+      "password": "New password",
+      "passwordHelp": "At least 12 characters, with upper and lower case letters and a number.",
+      "confirmPassword": "Confirm password",
+      "submit": "Set password and continue",
+      "deadLinkTitle": "This invitation link has expired",
+      "deadLinkBody": "Invitation links can only be used once, and they run out after a week.",
+      "deadLinkHelp": "Ask the person who invited you to send it again — your account is still waiting.",
+      "backToSignIn": "Back to sign in",
+      "activationFailed": "Your password was saved, but the account could not be activated. Ask an administrator to check your invitation, then sign in."
     },
     "forgot": {
       "title": "Forgot your password?",
@@ -322,6 +359,9 @@
       "disable": "Close account",
       "cancelInvitation": "Cancel invitation",
       "failed": "That change could not be saved.",
+      "resendInvitation": "Resend invitation",
+      "resendSent": "Invitation sent again.",
+      "resendFailed": "That invitation could not be sent.",
       "confirm": {
         "suspendTitle": "Suspend {name}?",
         "suspendBody": "They will be signed out and cannot sign in again until you reactivate them. Their roles and history are kept.",
@@ -352,6 +392,7 @@
       "editingSelf": "You are changing your own roles. You cannot remove your own Super Admin role.",
       "save": "Save roles",
       "cancel": "Cancel",
+      "wouldLockYouOut": "These roles would leave you unable to manage staff, and you could not undo it. Keep a role that includes staff management, or ask another administrator to make the change.",
       "failed": "Those roles could not be saved."
     },
     "invite": {

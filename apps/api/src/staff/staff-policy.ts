@@ -70,6 +70,56 @@ export function assertNotSelf(
 }
 
 /**
+ * Only a Super Admin may act on a Super Admin.
+ *
+ * Without this, staff.manage reaches upward: a Finance Manager could suspend
+ * the people who granted them their role, or strip their roles, so long as
+ * one other Super Admin survived the last-one rule. Authority has to flow
+ * downward or it is not authority.
+ */
+export function assertMayManageSuperAdmin(
+  actor: StaffContext,
+  targetIsSuperAdmin: boolean,
+  action: string,
+): void {
+  if (!targetIsSuperAdmin) return;
+  if (actor.isSuperAdmin) return;
+
+  throw new ForbiddenException({
+    reason: 'target_is_super_admin',
+    message: `Only a Super Admin can ${action} another Super Admin.`,
+  });
+}
+
+/**
+ * You may not remove your own ability to manage staff.
+ *
+ * Changing your own roles is allowed — people reorganise — but dropping the
+ * one that lets you reach this screen is a door that locks behind you: undoing
+ * it needs the permission you just gave away. Somebody else has to do it.
+ */
+export function assertKeepsOwnAccess(options: {
+  actor: StaffContext;
+  targetStaffUserId: string;
+  /** What they would hold afterwards. */
+  resultingRoleKeys: string[];
+  resultingPermissions: string[];
+}): void {
+  if (options.actor.staffUserId !== options.targetStaffUserId) return;
+
+  const keepsAccess =
+    options.resultingRoleKeys.includes(SUPER_ADMIN_ROLE_KEY) ||
+    options.resultingPermissions.includes('staff.manage');
+
+  if (keepsAccess) return;
+
+  throw new BadRequestException({
+    reason: 'would_lock_yourself_out',
+    message:
+      'That would remove your own access to staff management, and you could not undo it. Ask another administrator to make this change.',
+  });
+}
+/**
  * The organisation must keep at least one Super Admin who can actually sign in.
  *
  * Losing the last one means nobody can manage staff, roles or settings ever

@@ -45,6 +45,11 @@ const LAST_SEEN_INTERVAL_MS = 5 * 60_000;
  * 401 (who are you?), while a known person who is suspended is 403 (we know
  * who you are, and the answer is no).
  */
+
+export interface ResolveOptions {
+  /** Set only by the endpoint where an invitation is accepted. */
+  allowInvited?: boolean;
+}
 @Injectable()
 export class StaffContextService {
   private readonly logger = new Logger(StaffContextService.name);
@@ -64,9 +69,9 @@ export class StaffContextService {
     private readonly supabase: SupabaseService,
   ) {}
 
-  async resolve(token: string): Promise<StaffContext> {
+  async resolve(token: string, options: ResolveOptions = {}): Promise<StaffContext> {
     const identity = await this.verifyToken(token);
-    return this.loadStaff(identity.authUserId, identity.email);
+    return this.loadStaff(identity.authUserId, identity.email, options);
   }
 
   /** Checks the token with Supabase; anything unverifiable is a 401. */
@@ -101,7 +106,11 @@ export class StaffContextService {
    * A valid Supabase account that is not staff is refused: identity alone
    * grants nothing here.
    */
-  private async loadStaff(authUserId: string, email: string): Promise<StaffContext> {
+  private async loadStaff(
+    authUserId: string,
+    email: string,
+    options: ResolveOptions = {},
+  ): Promise<StaffContext> {
     const staff: StaffRecord | null = await this.prisma.db.staffUser.findUnique({
       where: { authUserId },
       select: {
@@ -128,7 +137,7 @@ export class StaffContextService {
       throw this.refuse('not_staff');
     }
 
-    this.assertStatusAllowsAccess(staff.status as StaffStatus);
+    this.assertStatusAllowsAccess(staff.status as StaffStatus, options);
 
     const roleKeys: string[] = staff.roles.map((entry) => entry.role.key);
 
@@ -159,8 +168,9 @@ export class StaffContextService {
    * Hiding buttons in the browser is not security: this is the check that
    * actually stops a suspended account, whatever it sends us.
    */
-  private assertStatusAllowsAccess(status: StaffStatus): void {
+  private assertStatusAllowsAccess(status: StaffStatus, options: ResolveOptions = {}): void {
     if (status === 'ACTIVE') return;
+    if (status === 'INVITED' && options.allowInvited) return;
 
     const reason: AuthRefusalReason =
       status === 'INVITED' ? 'invited' : status === 'SUSPENDED' ? 'suspended' : 'disabled';

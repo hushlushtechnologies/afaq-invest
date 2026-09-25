@@ -3,11 +3,13 @@
 import { useRef, type ReactNode } from 'react';
 
 import { OfflineBanner, PageTransition } from '@afaq/ui';
+import { AccountBlocked, isBlockingReason } from '@/components/auth/account-blocked';
 import { SessionWatcher } from '@/components/auth/session-watcher';
 
 import { SearchDialog } from '@/components/search/search-dialog';
 import type { AppEnvironment } from '@/lib/env';
 import { usePathname } from '@/i18n/navigation';
+import { usePermissions } from '@/lib/auth/use-permissions';
 import { useScrollRestoration } from '@/lib/shell/use-scroll-restoration';
 
 import { MobileNav } from './mobile-nav';
@@ -34,7 +36,6 @@ export function AdminShell({
 
   return (
     <>
-      <SessionWatcher />
       {/* <div className="flex h-dvh overflow-hidden bg-background"></div> */}
       <ShellProvider initialSidebarCollapsed={initialSidebarCollapsed}>
         <NotificationsProvider>
@@ -59,8 +60,21 @@ function ShellBody({
   const { searchOpen, setSearchOpen } = useShell();
 
   const contentRef = useRef<HTMLElement>(null);
+  const { refusalReason } = usePermissions();
 
   useScrollRestoration(contentRef, pathname);
+  // A refused account gets the message instead of the application. Handled
+  // here rather than page by page because it is true everywhere: a suspended
+  // person should not be browsing a working dashboard with an empty sidebar,
+  // wondering what broke.
+  if (isBlockingReason(refusalReason)) {
+    return (
+      <>
+        <SessionWatcher />
+        <AccountBlocked reason={refusalReason} />
+      </>
+    );
+  }
 
   return (
     <>

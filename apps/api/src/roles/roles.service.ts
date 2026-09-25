@@ -62,10 +62,7 @@ export class RolesService {
       throw new NotFoundException({ message: 'That role no longer exists.' });
     }
 
-    return {
-      ...toListItem(row),
-      permissionKeys: permissionsOf(row),
-    };
+    return toListItem(row);
   }
 
   /**
@@ -119,6 +116,8 @@ function toListItem(row: RoleRow): RoleListItem {
     isSystem: row.isSystem,
     isSuperAdmin: row.key === SUPER_ADMIN_ROLE_KEY,
     permissionCount: permissionsOf(row).length,
+
+    permissionKeys: permissionsOf(row),
     staffCount: row._count.staff,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),

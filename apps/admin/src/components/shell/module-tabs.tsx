@@ -3,9 +3,10 @@
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { LinkTabs } from '@afaq/ui';
-import { findActiveSection, sectionsFor } from '@/config/module-tabs';
 import type { NavModule } from '@/config/navigation';
+import { findActiveSection } from '@/config/module-tabs';
 import { Link, usePathname } from '@/i18n/navigation';
+import { useVisibleSections } from '@/lib/navigation/use-visible-sections';
 
 export interface ModuleTabsProps {
   module: NavModule['key'];
@@ -21,9 +22,11 @@ export function ModuleTabs({ module, counts }: ModuleTabsProps): ReactNode {
   const t = useTranslations('moduleTabs');
   const tNav = useTranslations('nav');
   const pathname = usePathname();
-  const sections = sectionsFor(module);
+  const { sections, loading } = useVisibleSections(module);
 
-  if (sections.length === 0) return null;
+  // Nothing to show while permissions load, and nothing to show when the
+  // person can open only one section — a tab bar of one tab is decoration.
+  if (loading || sections.length < 2) return null;
 
   const active = findActiveSection(module, pathname);
 

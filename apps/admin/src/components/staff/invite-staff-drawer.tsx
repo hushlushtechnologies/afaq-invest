@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { LOCALES, LOCALE_CODES, SYSTEM_ROLES } from '@afaq/types';
+
 import {
   Button,
   Checkbox,
@@ -22,6 +23,7 @@ import {
 } from '@afaq/ui';
 import { inviteStaffSchema, type InviteStaffFormValues } from '@afaq/validation';
 import { usePermissions } from '@/lib/auth/use-permissions';
+import { useRoles } from '@/lib/roles/use-roles';
 import { useInviteStaff } from '@/lib/staff/use-invite-staff';
 
 /**
@@ -57,8 +59,11 @@ export function InviteStaffDrawer({
     defaultValues: { email: '', fullName: '', jobTitle: '', roleKeys: [], preferredLocale: 'en' },
   });
 
-  const grantableRoles = SYSTEM_ROLES.filter(
-    (role) => isSuperAdmin || (role.key !== 'SUPER_ADMIN' && canAll([...role.permissions])),
+  // From the API, so custom roles can be handed out too.
+  const { data: roles } = useRoles();
+
+  const grantableRoles = (roles ?? []).filter(
+    (role) => isSuperAdmin || (!role.isSuperAdmin && canAll(role.permissionKeys)),
   );
 
   async function onSubmit(values: InviteStaffFormValues): Promise<void> {
@@ -190,7 +195,7 @@ export function InviteStaffDrawer({
                     <Checkbox
                       key={role.key}
                       label={role.name}
-                      description={role.description}
+                      description={role.description ?? undefined}
                       checked={field.value.includes(role.key)}
                       onChange={(event) =>
                         field.onChange(

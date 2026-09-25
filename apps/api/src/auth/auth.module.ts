@@ -4,6 +4,7 @@ import { AuthController } from './auth.controller.js';
 import { AuthGuard } from './auth.guard.js';
 import { PermissionsGuard } from './permissions.guard.js';
 import { StaffContextService } from './staff-context.service.js';
+import { StaffModule } from '../staff/staff.module.js';
 
 /**
  * Authentication and the staff context.
@@ -13,6 +14,7 @@ import { StaffContextService } from './staff-context.service.js';
  * endpoints nobody has written yet.
  */
 @Module({
+  imports: [StaffModule],
   controllers: [AuthController],
   providers: [
     StaffContextService,

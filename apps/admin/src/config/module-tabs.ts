@@ -1,3 +1,4 @@
+import type { PermissionKey } from '@afaq/types';
 import type { NavModule } from './navigation';
 
 /**
@@ -10,24 +11,34 @@ export interface ModuleSection {
   key: string;
   /** Full path, without the language prefix. */
   href: string;
+  permissions?: readonly PermissionKey[];
 }
 
 export const MODULE_TABS: Partial<Record<NavModule['key'], readonly ModuleSection[]>> = {
   administration: [
-    { key: 'staff', href: '/administration/staff' },
-    { key: 'roles', href: '/administration/roles' },
-    { key: 'audit', href: '/administration/audit' },
+    { key: 'staff', href: '/administration/staff', permissions: ['staff.view'] },
+    { key: 'roles', href: '/administration/roles', permissions: ['role.view'] },
+    { key: 'audit', href: '/administration/audit', permissions: ['audit.view'] },
   ],
   investors: [
-    { key: 'all', href: '/investors/all' },
-    { key: 'kyc', href: '/investors/kyc' },
-    { key: 'compliance', href: '/investors/compliance' },
+    { key: 'all', href: '/investors/all', permissions: ['investor.view'] },
+    { key: 'kyc', href: '/investors/kyc', permissions: ['kyc.view'] },
+    { key: 'compliance', href: '/investors/compliance', permissions: ['kyc.view'] },
   ],
   finance: [
-    { key: 'payments', href: '/finance/payments' },
-    { key: 'ledger', href: '/finance/ledger' },
-    { key: 'distributions', href: '/finance/distributions' },
-    { key: 'reconciliation', href: '/finance/reconciliation' },
+    { key: 'payments', href: '/finance/payments', permissions: ['finance.view'] },
+    { key: 'ledger', href: '/finance/ledger', permissions: ['finance.view'] },
+    {
+      key: 'distributions',
+      href: '/finance/distributions',
+      permissions: ['finance.view'],
+    },
+    {
+      key: 'reconciliation',
+      href: '/finance/reconciliation',
+      // Reconciliation is a controller's job, not a viewer's.
+      permissions: ['finance.manage'],
+    },
   ],
 };
 
