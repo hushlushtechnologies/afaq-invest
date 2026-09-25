@@ -5,14 +5,28 @@ export interface ApiClientOptions {
   getToken?: () => string | null | Promise<string | null>;
 }
 
+/**
+ * A request the API refused or could not complete.
+ *
+ * `reason` carries the API's machine-readable explanation — "suspended",
+ * "missing_permission" and so on — so the interface can say something useful
+ * rather than just "forbidden".
+ */
 export class ApiRequestError extends Error {
   constructor(
     public readonly statusCode: number,
     message: string,
+    public readonly reason?: string,
+    public readonly permission?: string,
   ) {
     super(message);
     this.name = 'ApiRequestError';
   }
+}
+
+interface ApiErrorBody extends ApiError {
+  reason?: string;
+  permission?: string;
 }
 
 export function createApiClient({ baseUrl, getToken }: ApiClientOptions) {
@@ -28,8 +42,13 @@ export function createApiClient({ baseUrl, getToken }: ApiClientOptions) {
     const response = await fetch(`${baseUrl}${path}`, { ...init, headers });
 
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as ApiError | null;
-      throw new ApiRequestError(response.status, body?.message ?? response.statusText);
+      const body = (await response.json().catch(() => null)) as ApiErrorBody | null;
+      throw new ApiRequestError(
+        response.status,
+        body?.message ?? response.statusText,
+        body?.reason,
+        body?.permission,
+      );
     }
 
     if (response.status === 204) {

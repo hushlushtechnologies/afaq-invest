@@ -1,7 +1,11 @@
 // Afaq Invest — database schema.
 //
 // Prisma 7: the connection URL lives in prisma.config.ts, not here.
-// Business models are intentionally absent — they are added sprint by sprint.
+//
+// Sprint 3 adds the authentication and authorization foundation. Identity
+// (passwords, sessions, recovery emails) belongs to Supabase Auth and is never
+// duplicated here; this schema owns application-level authorization: who the
+// staff are, what they may do, and what they did.
 
 generator client {
   provider     = "prisma-client"
@@ -11,4 +15,322 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ===========================================================================
+// ENUMS
+// ===========================================================================
+
+/// Where a staff member stands with the Admin Portal.
+///
+/// INVITED   invited, has not set a password yet — cannot sign in
+/// ACTIVE    may sign in and use whatever their roles permit
+/// SUSPENDED temporarily blocked; the account and its roles stay intact
+/// DISABLED  permanently closed; kept only so audit history still resolves
+enum StaffStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+  DISABLED
+}
+
+/// The thing a permission applies to.
+enum PermissionResource {
+  DASHBOARD
+  INVESTOR
+  KYC
+  COMPANY
+  PARTNER
+  OPPORTUNITY
+  INVESTMENT_RULE
+  INVESTMENT_REQUEST
+  FINANCE
+  DOCUMENT
+  REPORT
+  STAFF
+  ROLE
+  PERMISSION
+  SETTINGS
+  AUDIT
+}
+
+/// What may be done to a resource.
+enum PermissionAction {
+  VIEW
+  CREATE
+  EDIT
+  DELETE
+  APPROVE
+  REJECT
+  VERIFY
+  MANAGE
+  EXPORT
+}
+
+/// Groups audit entries so the viewer can filter them sensibly.
+enum AuditCategory {
+  AUTH
+  STAFF
+  ROLE
+  PERMISSION
+  SECURITY
+  SETTINGS
+}
+
+/// Authentication and security events, kept apart from the audit trail.
+///
+/// LOGIN_FAILED is a wrong password — a person's mistake.
+/// LOGIN_BLOCKED is a correct password refused because the account is
+/// suspended or disabled, which is a security signal worth watching.
+enum AuthEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  LOGIN_BLOCKED
+  LOGOUT
+  PASSWORD_RESET_REQUESTED
+  PASSWORD_RESET_COMPLETED
+  INVITATION_SENT
+  INVITATION_ACCEPTED
+  SESSION_REVOKED
+}
+
+// ===========================================================================
+// STAFF
+// ===========================================================================
+
+/// A member of Afaq Invest staff who may use the Admin Portal.
+///
+/// Passwords and sessions live in Supabase; `authUserId` is the link. It is
+/// null only between sending an invitation and Supabase creating the account,
+/// and the API refuses every request where it is null.
+model StaffUser {
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Supabase auth.users.id. Null only while an invitation is in flight.
+  authUserId String? @unique @map("auth_user_id") @db.Uuid
+
+  /// Always stored lowercase: the human identifier and the invitation address.
+  email    String  @unique
+  fullName String  @map("full_name")
+  jobTitle String? @map("job_title")
+  phone    String?
+
+  /// Supabase Storage path for the profile photo.
+  avatarUrl String? @map("avatar_url")
+
+  status StaffStatus @default(INVITED)
+
+  /// Which language to write to this person in.
+  preferredLocale String @default("en") @map("preferred_locale")
+
+  // --- invitation lifecycle (no separate model: these belong to one person)
+  invitedAt           DateTime? @map("invited_at")
+  invitationExpiresAt DateTime? @map("invitation_expires_at")
+  invitationSentCount Int       @default(0) @map("invitation_sent_count")
+  invitedById         String?   @map("invited_by_id") @db.Uuid
+
+  // --- activity
+  activatedAt DateTime? @map("activated_at")
+  lastLoginAt DateTime? @map("last_login_at")
+  lastSeenAt  DateTime? @map("last_seen_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // --- relations
+  invitedBy    StaffUser?  @relation("StaffInvitations", fields: [invitedById], references: [id], onDelete: SetNull)
+  invitedStaff StaffUser[] @relation("StaffInvitations")
+
+  roles StaffUserRole[] @relation("StaffUserRoles")
+
+  /// Role assignments this person made for others.
+  roleAssignmentsMade StaffUserRole[] @relation("RoleAssignedBy")
+
+  rolesCreated Role[] @relation("RoleCreatedBy")
+
+  auditEntries   AuditLog[]
+  authActivities AuthActivity[]
+
+  @@index([status])
+  @@index([email])
+  @@index([lastLoginAt])
+  @@map("staff_users")
+}
+
+// ===========================================================================
+// ROLES AND PERMISSIONS
+// ===========================================================================
+
+/// A named bundle of permissions.
+///
+/// The eight roles from the specification are seeded with isSystem = true and
+/// are protected from renaming and deletion. Custom roles are ordinary rows.
+/// SUPER_ADMIN's override lives in one constant in the API, not in this table.
+model Role {
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Stable identifier used in code, e.g. SUPER_ADMIN.
+  key         String  @unique
+  name        String
+  description String?
+
+  /// Seeded roles that must not be renamed or deleted.
+  isSystem Boolean @default(false) @map("is_system")
+
+  createdById String? @map("created_by_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  createdBy   StaffUser?       @relation("RoleCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  permissions RolePermission[]
+  staff       StaffUserRole[]
+
+  @@index([isSystem])
+  @@map("roles")
+}
+
+/// One thing that may be done to one resource, e.g. STAFF + CREATE.
+///
+/// Seeded and never created through the UI: the set of permissions is decided
+/// by what the software can actually do.
+model Permission {
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Dotted form used across the API and the frontend, e.g. "staff.create".
+  key String @unique
+
+  resource    PermissionResource
+  action      PermissionAction
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  roles RolePermission[]
+
+  @@unique([resource, action])
+  @@index([resource])
+  @@map("permissions")
+}
+
+/// Which permissions a role carries.
+model RolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+/// Which roles a staff member holds.
+///
+/// Who granted a privilege, and when, is itself an audit question — so it is
+/// recorded on the assignment rather than only in the audit log.
+model StaffUserRole {
+  staffUserId String @map("staff_user_id") @db.Uuid
+  roleId      String @map("role_id") @db.Uuid
+
+  assignedAt   DateTime @default(now()) @map("assigned_at")
+  assignedById String?  @map("assigned_by_id") @db.Uuid
+
+  staffUser  StaffUser  @relation("StaffUserRoles", fields: [staffUserId], references: [id], onDelete: Cascade)
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  assignedBy StaffUser? @relation("RoleAssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
+
+  @@id([staffUserId, roleId])
+  @@index([roleId])
+  @@map("staff_user_roles")
+}
+
+// ===========================================================================
+// AUDIT AND SECURITY RECORDS
+// ===========================================================================
+
+/// What changed, who changed it, and what it looked like before and after.
+///
+/// Written by the API only. There is deliberately no update or delete path:
+/// audit records are security records, not ordinary data.
+model AuditLog {
+  id String @id @default(uuid()) @db.Uuid
+
+  occurredAt DateTime @default(now()) @map("occurred_at")
+
+  actorStaffUserId String? @map("actor_staff_user_id") @db.Uuid
+
+  /// Copied at write time, so the entry still names someone after that staff
+  /// member is removed.
+  actorEmail String @map("actor_email")
+
+  category AuditCategory
+
+  /// Dotted event name, e.g. "staff.role_assigned".
+  action String
+
+  /// What was acted upon: "StaffUser", "Role", "Permission".
+  targetType String? @map("target_type")
+  targetId   String? @map("target_id")
+
+  /// Readable name at the time, e.g. the person's email.
+  targetLabel String? @map("target_label")
+
+  /// State before and after, for changes worth reconstructing. Never contains
+  /// passwords, tokens or secrets.
+  before Json?
+  after  Json?
+
+  metadata Json?
+
+  ipAddress String? @map("ip_address")
+  userAgent String? @map("user_agent")
+
+  actor StaffUser? @relation(fields: [actorStaffUserId], references: [id], onDelete: SetNull)
+
+  @@index([occurredAt])
+  @@index([category, occurredAt])
+  @@index([actorStaffUserId])
+  @@index([targetType, targetId])
+  @@map("audit_logs")
+}
+
+/// Sign-ins, sign-outs, password resets and other security events.
+///
+/// Separate from AuditLog: it answers "who tried to get in?", arrives at a
+/// different volume, and powers the login history in Settings → Security.
+/// Each event is written to one of the two, never both.
+model AuthActivity {
+  id String @id @default(uuid()) @db.Uuid
+
+  occurredAt DateTime @default(now()) @map("occurred_at")
+
+  staffUserId String? @map("staff_user_id") @db.Uuid
+
+  /// The address used in the attempt — a failed sign-in may match no account.
+  email String
+
+  event     AuthEventType
+  succeeded Boolean       @default(true)
+
+  /// Short reason for a refusal, e.g. "invalid_credentials", "suspended".
+  /// Never contains the password or any token.
+  failureReason String? @map("failure_reason")
+
+  ipAddress String? @map("ip_address")
+  userAgent String? @map("user_agent")
+
+  /// Friendly device summary shown in login history, e.g. "Chrome on Windows".
+  deviceLabel String? @map("device_label")
+
+  staffUser StaffUser? @relation(fields: [staffUserId], references: [id], onDelete: SetNull)
+
+  @@index([occurredAt])
+  @@index([staffUserId, occurredAt])
+  @@index([email, occurredAt])
+  @@index([event, occurredAt])
+  @@map("auth_activities")
 }

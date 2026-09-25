@@ -1,13 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
-import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { ThemeProvider } from '@afaq/ui';
-import { AdminShell } from '@/components/shell/admin-shell';
-import { getEnvironment } from '@/config/app-meta';
+import { Providers } from '@/components/providers';
 import { routing } from '@/i18n/routing';
-import { isCollapsed, SIDEBAR_COOKIE } from '@/lib/shell/sidebar-preference';
+import { getServerSession } from '@/lib/auth/server';
 import { fontVariables } from '../fonts';
 import '../globals.css';
 
@@ -31,6 +28,13 @@ export function generateStaticParams(): Array<{ locale: string }> {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+/**
+ * The document and everything shared by every page — language, theme, data
+ * fetching and the session.
+ *
+ * The admin shell is not here: signing in happens outside it, so the sidebar
+ * and topbar belong to the (admin) group rather than to every page.
+ */
 export default async function LocaleLayout({
   children,
   params,
@@ -44,10 +48,8 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Reading the sidebar choice here means the very first HTML has the right
-  // width — no flash of an expanded sidebar collapsing a moment later.
-  const cookieStore = await cookies();
-  const sidebarCollapsed = isCollapsed(cookieStore.get(SIDEBAR_COOKIE)?.value);
+  // Read on the server so the first paint already knows who is signed in.
+  const session = await getServerSession();
 
   return (
     <html
@@ -58,11 +60,7 @@ export default async function LocaleLayout({
     >
       <body>
         <NextIntlClientProvider>
-          <ThemeProvider storageKey="afaq-admin-theme">
-            <AdminShell initialSidebarCollapsed={sidebarCollapsed} environment={getEnvironment()}>
-              {children}
-            </AdminShell>
-          </ThemeProvider>
+          <Providers initialSession={session}>{children}</Providers>
         </NextIntlClientProvider>
       </body>
     </html>

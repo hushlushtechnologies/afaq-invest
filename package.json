@@ -15,6 +15,8 @@
     "db:generate": "pnpm --filter @afaq/database db:generate",
     "db:status": "pnpm --filter @afaq/database db:status",
     "db:migrate": "pnpm --filter @afaq/database db:migrate",
+    "db:seed": "pnpm --filter @afaq/database db:seed",
+    "db:bootstrap": "pnpm --filter @afaq/api bootstrap",
     "db:studio": "pnpm --filter @afaq/database db:studio",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

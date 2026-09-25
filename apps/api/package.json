@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "nest start --watch",
     "build": "nest build",
+    "bootstrap": "nest build && node --env-file-if-exists=.env --env-file-if-exists=.env.local dist/scripts/bootstrap-super-admin.js",
     "start": "node dist/main",
     "start:prod": "node dist/main",
     "start:debug": "nest start --debug --watch",

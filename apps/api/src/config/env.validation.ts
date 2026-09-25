@@ -51,6 +51,9 @@ export class EnvironmentVariables {
 
   @IsString()
   DATABASE_URL!: string;
+  @IsUrl({ require_tld: false })
+  @IsOptional()
+  ADMIN_APP_URL?: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {

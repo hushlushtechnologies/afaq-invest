@@ -3,6 +3,7 @@
 import { useRef, type ReactNode } from 'react';
 
 import { OfflineBanner, PageTransition } from '@afaq/ui';
+import { SessionWatcher } from '@/components/auth/session-watcher';
 
 import { SearchDialog } from '@/components/search/search-dialog';
 import type { AppEnvironment } from '@/lib/env';
@@ -32,13 +33,17 @@ export function AdminShell({
   const pathname = usePathname();
 
   return (
-    <ShellProvider initialSidebarCollapsed={initialSidebarCollapsed}>
-      <NotificationsProvider>
-        <ShellBody environment={environment} pathname={pathname}>
-          {children}
-        </ShellBody>
-      </NotificationsProvider>
-    </ShellProvider>
+    <>
+      <SessionWatcher />
+      {/* <div className="flex h-dvh overflow-hidden bg-background"></div> */}
+      <ShellProvider initialSidebarCollapsed={initialSidebarCollapsed}>
+        <NotificationsProvider>
+          <ShellBody environment={environment} pathname={pathname}>
+            {children}
+          </ShellBody>
+        </NotificationsProvider>
+      </ShellProvider>
+    </>
   );
 }
 

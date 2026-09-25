@@ -10,6 +10,8 @@ export interface AppConfig {
   apiPrefix: string;
   corsOrigins: string[];
   databaseUrl: string;
+  /** Where the Admin Portal runs — used to build invitation and reset links. */
+  adminAppUrl: string;
   supabase: SupabaseConfig;
 }
 
@@ -24,6 +26,7 @@ export default (): AppConfig => ({
     .map((origin) => origin.trim())
     .filter(Boolean),
   databaseUrl: process.env.DATABASE_URL ?? '',
+  adminAppUrl: process.env.ADMIN_APP_URL ?? 'http://localhost:3000',
   supabase: {
     url: process.env.SUPABASE_URL ?? '',
     publishableKey: process.env.SUPABASE_PUBLISHABLE_KEY ?? '',

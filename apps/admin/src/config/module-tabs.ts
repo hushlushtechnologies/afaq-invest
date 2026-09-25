@@ -13,6 +13,11 @@ export interface ModuleSection {
 }
 
 export const MODULE_TABS: Partial<Record<NavModule['key'], readonly ModuleSection[]>> = {
+  administration: [
+    { key: 'staff', href: '/administration/staff' },
+    { key: 'roles', href: '/administration/roles' },
+    { key: 'audit', href: '/administration/audit' },
+  ],
   investors: [
     { key: 'all', href: '/investors/all' },
     { key: 'kyc', href: '/investors/kyc' },

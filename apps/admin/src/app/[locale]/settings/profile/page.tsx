@@ -2,13 +2,18 @@
 
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
-import { Avatar, Badge, Button, Card, InfoCard } from '@afaq/ui';
+import { Avatar, Badge, Button, Card, InfoCard, LoadingState } from '@afaq/ui';
+
 import { SettingsSectionPage } from '@/components/settings/settings-section';
 import { useCurrentUser } from '@/lib/auth/use-current-user';
 
 export default function ProfileSettingsPage(): ReactNode {
   const t = useTranslations('settings');
   const user = useCurrentUser();
+
+  if (!user) {
+    return <LoadingState />;
+  }
 
   const rows = [
     { label: t('sections.profile.name'), value: user.name },

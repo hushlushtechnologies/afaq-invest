@@ -147,6 +147,12 @@
     "placeholderNote": "Profile, security and preference pages are built in a later phase."
   },
   "moduleTabs": {
+    "administrationDescription": "Staff accounts, roles and the audit trail.",
+    "administration": {
+      "staff": "Staff",
+      "roles": "Roles & permissions",
+      "audit": "Audit"
+    },
     "sectionsOf": "{module} sections",
     "investorsDescription": "Investor records, verification and compliance checks.",
     "financeDescription": "Payments, ledger entries, distributions and reconciliation.",
@@ -162,10 +168,128 @@
       "reconciliation": "Reconciliation"
     }
   },
+
+  "auth": {
+    "reset": {
+      "title": "Set a new password",
+      "subtitle": "Choose something you have not used elsewhere.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "requirements": "At least 12 characters, with upper and lower case letters and a number.",
+      "submit": "Save new password",
+      "signsOutOthers": "Saving will sign you out on every other device.",
+      "doneTitle": "Password updated",
+      "doneBody": "You are signed in on this device. Any other device has been signed out.",
+      "continue": "Go to the portal",
+      "invalidTitle": "This link no longer works",
+      "invalidBody": "Password links can be used once and expire after an hour. Request a new one and it will arrive within a minute.",
+      "requestNew": "Request a new link",
+      "strength": {
+        "0": "Too short",
+        "1": "Weak — add more characters",
+        "2": "Fair — longer would be better",
+        "3": "Good",
+        "4": "Strong"
+      }
+    },
+    "forgot": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email address and we will send you a link to set a new one.",
+      "submit": "Send reset link",
+      "sentTitle": "Check your email",
+      "sentBody": "If an account exists for <strong>{email}</strong>, a link to set a new password is on its way. The link is valid for one hour.",
+      "checkSpam": "Nothing after a minute or two? Check your spam folder, and make sure you used your work address.",
+      "resend": "Send it again",
+      "resendIn": "Send again in {seconds}s",
+      "backToLogin": "Back to sign in"
+    },
+    "brand": {
+      "headline": "Investment management, handled with care.",
+      "description": "One place for investors, opportunities, compliance and payments — for the team behind Afaq Al Barakha Investment.",
+      "security": "Protected by two-layer authentication and full audit logging"
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Use the account your administrator set up for you.",
+      "email": "Email address",
+      "emailPlaceholder": "you@afaq.ae",
+      "password": "Password",
+      "forgot": "Forgot password?",
+      "submit": "Sign in",
+      "noRegistration": "Admin accounts are created by an administrator. There is no public sign-up."
+    },
+    "errors": {
+      "invalidCredentials": "That email and password combination is not correct.",
+      "emailNotConfirmed": "This account has not been activated yet. Check your invitation email.",
+      "tooManyAttempts": "Too many attempts. Wait a few minutes and try again.",
+      "expiredLink": "This link has expired. Request a new one.",
+      "weakPassword": "That password is too easy to guess. Choose a longer one.",
+      "samePassword": "Choose a password you have not used before.",
+      "network": "Could not reach the server. Check your connection and try again.",
+      "unknown": "Something went wrong. Try again, and contact support if it continues."
+    }
+  },
+  "staff": {
+    "title": "Staff",
+    "description": "Everyone with access to the Admin Portal, and what they may do.",
+    "searchPlaceholder": "Search by name or email",
+    "loadError": "The staff list could not be loaded.",
+    "noRoles": "No role yet",
+    "never": "Never",
+    "noAccessTitle": "You can’t view staff",
+    "noAccessDescription": "Your role doesn’t include permission to see the staff directory. Ask an administrator if you need it.",
+    "columns": {
+      "name": "Name",
+      "roles": "Roles",
+      "status": "Status",
+      "lastActivity": "Last activity",
+      "added": "Added"
+    },
+    "invite": {
+      "action": "Invite staff",
+      "title": "Invite a staff member",
+      "description": "They will receive an email inviting them to set a password and sign in.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Fatima Hassan",
+      "email": "Work email address",
+      "emailHelp": "The invitation goes here, and this is how they will sign in.",
+      "jobTitle": "Job title",
+      "jobTitlePlaceholder": "Compliance Officer",
+      "language": "Language",
+      "languageHelp": "Which language to write to them in.",
+      "roles": "Roles",
+      "rolesHelp": "What they will be able to do. You can only grant roles you hold yourself.",
+      "submit": "Send invitation",
+      "cancel": "Cancel",
+      "done": "Close",
+      "failed": "The invitation could not be sent. Try again shortly.",
+      "sentTitle": "Invitation sent",
+      "sentBody": "{email} will receive an email with a link to set their password. Until then they appear as Invited."
+    },
+    "status": {
+      "INVITED": "Invited",
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended",
+      "DISABLED": "Disabled"
+    },
+    "filters": {
+      "status": "Status",
+      "role": "Role",
+      "allStatuses": "All statuses",
+      "allRoles": "All roles"
+    },
+    "empty": {
+      "title": "No staff match this",
+      "description": "Try a different search, or clear the filters to see everyone.",
+      "refresh": "Refresh"
+    }
+  },
+
   "settings": {
     "title": "Settings",
     "description": "Your account, your preferences and how Afaq Invest is set up.",
     "comingInSprint3": "Sprint 3",
+    "comingSoon": "Coming soon",
     "editableNote": "Editing your profile is connected to the real account in Sprint 3.",
     "sections": {
       "profile": {
@@ -174,6 +298,7 @@
         "name": "Full name",
         "email": "Email address",
         "role": "Role",
+        "signOutMessage": "You will need to sign in again to continue working.",
         "changePhoto": "Change photo"
       },
       "security": {
@@ -181,8 +306,8 @@
         "description": "Sign-in, verification and active sessions.",
         "password": {
           "title": "Password",
-          "description": "Change the password you use to sign in.",
-          "action": "Change"
+          "description": "Change the password you use to sign in. You will stay signed in on this device.",
+          "action": "Change password"
         },
         "twoFactor": {
           "title": "Two-factor verification",
@@ -190,11 +315,17 @@
           "action": "Set up"
         },
         "sessions": {
-          "title": "Active sessions",
-          "description": "See where you are signed in and end sessions you don’t recognise.",
-          "action": "Review"
+          "title": "Devices and sessions",
+          "description": "Signed in somewhere you no longer use — a shared machine, an old phone? End those sessions here. Your password is unaffected.",
+          "signOutOthers": "Sign out other devices",
+          "signOutEverywhere": "Sign out everywhere",
+          "othersSignedOut": "Other devices have been signed out. This one is still signed in.",
+          "confirmOthersTitle": "Sign out other devices?",
+          "confirmOthersBody": "Every other browser and device will need to sign in again. This device stays signed in.",
+          "confirmEverywhereTitle": "Sign out everywhere?",
+          "confirmEverywhereBody": "You will be signed out here too and returned to the sign-in page."
         },
-        "note": "Security settings are connected to the real account in Sprint 3."
+        "historyNote": "A list of recent sign-ins is coming with the audit trail."
       },
       "preferences": {
         "title": "Preferences",

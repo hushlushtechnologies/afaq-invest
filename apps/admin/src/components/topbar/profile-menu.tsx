@@ -31,6 +31,9 @@ export function ProfileMenu(): ReactNode {
   const user = useCurrentUser();
   const { signOut } = useSignOut();
 
+  // Nothing to show before a session exists; protected routes handle the rest.
+  if (!user) return null;
+
   const items = [
     { key: 'myProfile', href: '/settings/profile', icon: <UserRound /> },
     { key: 'security', href: '/settings/security', icon: <ShieldCheck /> },

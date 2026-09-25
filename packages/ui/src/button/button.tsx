@@ -1,4 +1,10 @@
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  type ComponentPropsWithRef,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import { cn } from '@afaq/utils';
 import { Spinner, type SpinnerSize } from '../feedback/spinner';
 
@@ -68,6 +74,7 @@ export interface ButtonProps extends ComponentPropsWithRef<'button'> {
   /** Icon on the trailing edge — right in English, left in Arabic. */
   iconEnd?: ReactNode;
   fullWidth?: boolean;
+  asChild?: boolean;
 }
 
 export function Button({
@@ -82,14 +89,25 @@ export function Button({
   className,
   children,
   type = 'button',
+  asChild = false,
   ...props
 }: ButtonProps): ReactNode {
+  const styles = cn(BASE, VARIANTS[variant], SIZES[size], fullWidth && 'w-full', className);
+
+  if (asChild && isValidElement<{ className?: string }>(children)) {
+    const child = children as ReactElement<{ className?: string }>;
+    return cloneElement(child, {
+      className: cn(styles, child.props.className),
+    });
+  }
   return (
     <button
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={cn(BASE, VARIANTS[variant], SIZES[size], fullWidth && 'w-full', className)}
+      className={cn(BASE, VARIANTS[variant], SIZES[size], fullWidth && 'w-full', className, {
+        styles,
+      })}
       {...props}
     >
       {/* The label stays in place but invisible while loading, so the width never changes. */}

@@ -14,7 +14,5 @@ export interface Paginated<T> {
 }
 
 export * from './locale';
-
-// export type ThemeMode = 'light' | 'dark' | 'system';
-
-// export type ResolvedTheme = 'light' | 'dark';
+export * from './rbac';
+export * from './staff';

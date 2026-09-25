@@ -19,10 +19,12 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:status": "prisma migrate status",
+    "db:seed": "pnpm build && node dist/seed.js",
     "db:studio": "prisma studio",
     "clean": "node ../../scripts/clean.mjs dist .turbo src/generated"
   },
   "dependencies": {
+    "@afaq/types": "workspace:*",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "pg": "^8.23.0"

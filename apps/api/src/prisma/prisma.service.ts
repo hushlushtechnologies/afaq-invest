@@ -5,6 +5,7 @@ import { createPrismaClient, type PrismaClient } from '@afaq/database';
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
+
   private client!: PrismaClient;
 
   constructor(private readonly config: ConfigService) {}
@@ -22,18 +23,31 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     });
 
     await this.client.$connect();
+
     this.logger.log('Prisma connected to PostgreSQL');
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.client?.$disconnect();
+    if (this.client) {
+      await this.client.$disconnect();
+    }
   }
 
-  /** The Prisma client. Use in services: this.prisma.db.someModel.findMany() */
+  /**
+   * Prisma client.
+   *
+   * Usage:
+   * this.prisma.db.staffUser.findMany()
+   * this.prisma.db.staffUser.findUnique(...)
+   * this.prisma.db.investor.findMany()
+   */
   get db(): PrismaClient {
     return this.client;
   }
 
+  /**
+   * Check whether the database connection is healthy.
+   */
   async isHealthy(): Promise<boolean> {
     try {
       await this.client.$queryRaw`SELECT 1`;
