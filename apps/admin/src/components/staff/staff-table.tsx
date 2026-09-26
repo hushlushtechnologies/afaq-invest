@@ -24,6 +24,8 @@ import { useStaffList } from '@/lib/staff/use-staff-list';
 import { EditRolesDrawer } from './edit-roles-drawer';
 import { EditStaffDrawer } from './edit-staff-drawer';
 import { InviteStaffDrawer } from './invite-staff-drawer';
+import { ChangeEmailDrawer } from './change-email-drawer';
+import { ResetPasswordDialog } from './reset-password-dialog';
 import { StaffRowActions } from './staff-row-actions';
 
 import { StaffStatusBadge } from './staff-status-badge';
@@ -47,6 +49,8 @@ export function StaffTable(): ReactNode {
   const [search, setSearch] = useState('');
   const [inviting, setInviting] = useState(false);
   const [editing, setEditing] = useState<StaffListItem | null>(null);
+  const [resettingPassword, setResettingPassword] = useState<StaffListItem | null>(null);
+  const [changingEmail, setChangingEmail] = useState<StaffListItem | null>(null);
   // Roles come from the API so custom roles appear in the filter too.
   const { data: roles } = useRoles();
   const [editingRoles, setEditingRoles] = useState<StaffListItem | null>(null);
@@ -122,7 +126,13 @@ export function StaffTable(): ReactNode {
         header: '',
         meta: { align: 'end' },
         cell: ({ row }) => (
-          <StaffRowActions staff={row.original} onEdit={setEditing} onEditRoles={setEditingRoles} />
+          <StaffRowActions
+            staff={row.original}
+            onEdit={setEditing}
+            onEditRoles={setEditingRoles}
+            onResetPassword={setResettingPassword}
+            onChangeEmail={setChangingEmail}
+          />
         ),
       }),
     ],
@@ -226,10 +236,21 @@ export function StaffTable(): ReactNode {
         labels={tableLabels}
         pageSize={query.pageSize ?? 25}
         pageSizeOptions={[10, 25, 50]}
+        // The API returns one page at a time, so the footer has to drive the
+        // next request rather than page through the rows already in hand.
+        serverPagination={{
+          page: query.page ?? 1,
+          totalItems: data?.total ?? 0,
+          onPageChange: (page) => setQuery((current) => ({ ...current, page })),
+          onPageSizeChange: (pageSize) =>
+            setQuery((current) => ({ ...current, pageSize, page: 1 })),
+        }}
       />
       <InviteStaffDrawer open={inviting} onClose={() => setInviting(false)} />
       <EditStaffDrawer staff={editing} onClose={() => setEditing(null)} />
       <EditRolesDrawer staff={editingRoles} onClose={() => setEditingRoles(null)} />
+      <ResetPasswordDialog staff={resettingPassword} onClose={() => setResettingPassword(null)} />
+      <ChangeEmailDrawer staff={changingEmail} onClose={() => setChangingEmail(null)} />
     </div>
   );
 }

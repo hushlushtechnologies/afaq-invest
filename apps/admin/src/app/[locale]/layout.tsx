@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Providers } from '@/components/providers';
+import { getServerStaffContext } from '@/lib/auth/staff-context-server';
 import { routing } from '@/i18n/routing';
 import { getServerSession } from '@/lib/auth/server';
 import { fontVariables } from '../fonts';
@@ -49,7 +50,9 @@ export default async function LocaleLayout({
   }
 
   // Read on the server so the first paint already knows who is signed in.
-  const session = await getServerSession();
+  // Read on the server so the first paint already knows who is signed in —
+  // and what they may do, which decides the whole sidebar.
+  const [session, staffContext] = await Promise.all([getServerSession(), getServerStaffContext()]);
 
   return (
     <html
@@ -60,7 +63,9 @@ export default async function LocaleLayout({
     >
       <body>
         <NextIntlClientProvider>
-          <Providers initialSession={session}>{children}</Providers>
+          <Providers initialSession={session} initialStaffContext={staffContext}>
+            {children}
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>

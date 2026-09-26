@@ -193,6 +193,95 @@
     }
   },
 
+  "audit": {
+    "title": "Audit trail",
+    "viewLabel": "Which record to read",
+    "changesTab": "Changes",
+    "signInsTab": "Sign-ins",
+    "searchPlaceholder": "Search by person or record…",
+    "loadError": "The audit trail could not be loaded.",
+    "empty": {
+      "title": "Nothing recorded yet",
+      "description": "Changes to staff, roles and settings will appear here as they happen."
+    },
+    "columns": {
+      "when": "When",
+      "action": "What happened",
+      "category": "Area",
+      "actor": "Who",
+      "target": "Record"
+    },
+    "filters": { "category": "Area", "allCategories": "All areas", "from": "From", "to": "To" },
+    "categories": {
+      "AUTH": "Sign-in",
+      "STAFF": "Staff",
+      "ROLE": "Roles",
+      "PERMISSION": "Permissions",
+      "SECURITY": "Security",
+      "SETTINGS": "Settings"
+    },
+    "actions": {
+      "staff": {
+        "invited": "Staff member invited",
+        "invitation_accepted": "Invitation accepted",
+        "invitation_resent": "Invitation sent again",
+        "details_changed": "Details changed",
+        "roles_changed": "Roles changed",
+        "suspended": "Access suspended",
+        "disabled": "Account closed",
+        "active": "Account reactivated",
+        "super_admin_bootstrapped": "First Super Admin created"
+      },
+      "role": {
+        "created": "Role created",
+        "updated": "Role changed",
+        "deleted": "Role deleted"
+      }
+    },
+    "detail": {
+      "close": "Close",
+      "actor": "Made by",
+      "target": "Record",
+      "category": "Area",
+      "ipAddress": "IP address",
+      "changes": "What changed",
+      "field": "Field",
+      "before": "Before",
+      "after": "After",
+      "metadata": "Extra detail"
+    },
+    "signIns": {
+      "title": "Sign-in activity",
+      "searchPlaceholder": "Search by email address…",
+      "failuresOnly": "Failed attempts only",
+      "succeeded": "Signed in",
+      "failed": "Failed",
+      "loadError": "Sign-in activity could not be loaded.",
+      "empty": {
+        "title": "No sign-in activity yet",
+        "description": "Sign-ins, failed attempts and password resets appear here."
+      },
+      "columns": {
+        "when": "When",
+        "email": "Email address",
+        "event": "Event",
+        "outcome": "Outcome",
+        "device": "Device"
+      },
+      "events": {
+        "LOGIN_SUCCESS": "Signed in",
+        "LOGIN_FAILED": "Sign-in failed",
+        "LOGIN_BLOCKED": "Sign-in blocked",
+        "LOGOUT": "Signed out",
+        "PASSWORD_RESET_REQUESTED": "Password reset requested",
+        "PASSWORD_RESET_COMPLETED": "Password reset completed",
+        "INVITATION_SENT": "Invitation sent",
+        "INVITATION_ACCEPTED": "Invitation accepted",
+        "SESSION_REVOKED": "Session revoked"
+      }
+    }
+  },
+
   "auth": {
     "reset": {
       "title": "Set a new password",
@@ -343,6 +432,29 @@
     "never": "Never",
     "noAccessTitle": "You can’t view staff",
     "noAccessDescription": "Your role doesn’t include permission to see the staff directory. Ask an administrator if you need it.",
+    "resetPassword": {
+      "title": "Set a new password",
+      "warning": "This immediately replaces {name}'s password. They will be signed out of the portal and will need the new password to get back in.",
+      "explainer": "Nobody can read an existing password — not you, not us. Supabase keeps only a one-way scrambled copy, which is what makes passwords safe. What you can do is replace it and hand the new one over.",
+      "generate": "Generate a new password",
+      "onceOnly": "Copy this now. It is shown once and is stored nowhere — not in the audit trail, not in the database.",
+      "newPassword": "New password",
+      "copy": "Copy",
+      "copied": "Copied",
+      "handOver": "Give this to them in person or by phone, not by email, and ask them to change it once they are in.",
+      "cancel": "Cancel",
+      "done": "Done",
+      "failed": "The password could not be changed."
+    },
+    "changeEmail": {
+      "title": "Change sign-in email",
+      "warning": "They will sign in with the new address from now on. The old one stops working immediately.",
+      "email": "Email address",
+      "help": "Used for signing in and for anything the portal sends them.",
+      "save": "Change email",
+      "cancel": "Cancel",
+      "failed": "That email could not be changed."
+    },
     "columns": {
       "name": "Name",
       "roles": "Roles",
@@ -361,6 +473,8 @@
       "failed": "That change could not be saved.",
       "resendInvitation": "Resend invitation",
       "resendSent": "Invitation sent again.",
+      "changeEmail": "Change sign-in email",
+      "resetPassword": "Set a new password",
       "resendFailed": "That invitation could not be sent.",
       "confirm": {
         "suspendTitle": "Suspend {name}?",

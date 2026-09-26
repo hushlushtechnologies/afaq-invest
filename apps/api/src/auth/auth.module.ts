@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthController } from './auth.controller.js';
 import { AuthGuard } from './auth.guard.js';
 import { PermissionsGuard } from './permissions.guard.js';
+import { SuperAdminGuard } from './super-admin.guard.js';
 import { StaffContextService } from './staff-context.service.js';
 import { StaffModule } from '../staff/staff.module.js';
 
@@ -22,6 +23,7 @@ import { StaffModule } from '../staff/staff.module.js';
     // global guards in the order they are registered.
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: PermissionsGuard },
+    { provide: APP_GUARD, useClass: SuperAdminGuard },
   ],
   exports: [StaffContextService],
 })

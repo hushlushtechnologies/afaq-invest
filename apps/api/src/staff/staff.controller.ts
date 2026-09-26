@@ -20,7 +20,10 @@ import {
   UpdateStaffRolesDto,
   UpdateStaffStatusDto,
 } from './dto/update-staff.dto.js';
+import { SuperAdminOnly } from '../auth/super-admin.guard.js';
+import { ChangeStaffEmailDto, TransferRolesDto } from './dto/credentials.dto.js';
 import { InvitationLifecycleService } from './invitation-lifecycle.service.js';
+import { StaffCredentialsService } from './staff-credentials.service.js';
 import { StaffManagementService } from './staff-management.service.js';
 import { StaffInvitationsService } from './staff-invitations.service.js';
 import { StaffService } from './staff.service.js';
@@ -33,6 +36,7 @@ export class StaffController {
     private readonly invitations: StaffInvitationsService,
     private readonly management: StaffManagementService,
     private readonly lifecycle: InvitationLifecycleService,
+    private readonly credentials: StaffCredentialsService,
   ) {}
 
   @Get()
@@ -117,5 +121,56 @@ export class StaffController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<{ id: string }> {
     return this.lifecycle.resend(actor, id);
+  }
+
+  /**
+   * Sets a new password and returns it once.
+   *
+   * There is no endpoint that reads an existing password, and there cannot
+   * be: Supabase stores a one-way hash, so the original exists nowhere. This
+   * is the answer to somebody being locked out — a new password, handed over,
+   * changed by them afterwards.
+   */
+  @Post(':id/password')
+  @SuperAdminOnly()
+  @RequirePermissions('staff.manage')
+  @ApiOperation({ summary: 'Set a new password for a staff member (Super Admin only)' })
+  @ApiOkResponse({ description: 'The new password, returned once and stored nowhere' })
+  @ApiForbiddenResponse({ description: 'Not a Super Admin' })
+  resetPassword(
+    @CurrentStaff() actor: StaffContext,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<{ temporaryPassword: string }> {
+    return this.credentials.resetPassword(actor, id);
+  }
+
+  @Patch(':id/email')
+  @SuperAdminOnly()
+  @RequirePermissions('staff.manage')
+  @ApiOperation({ summary: 'Change the address a staff member signs in with (Super Admin only)' })
+  @ApiOkResponse({ description: 'Updated in both Supabase and the staff record' })
+  @ApiConflictResponse({ description: 'Another staff member already uses that address' })
+  changeEmail(
+    @CurrentStaff() actor: StaffContext,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: ChangeStaffEmailDto,
+  ): Promise<{ id: string }> {
+    return this.credentials.changeEmail(actor, id, body.email);
+  }
+
+  @Post(':id/transfer-roles')
+  @SuperAdminOnly()
+  @RequirePermissions('staff.manage')
+  @ApiOperation({ summary: "Move a staff member's roles to a colleague (Super Admin only)" })
+  @ApiOkResponse({ description: 'The roles now sit with the other person too' })
+  @ApiBadRequestResponse({ description: 'Nothing to transfer, or the same person twice' })
+  transferRoles(
+    @CurrentStaff() actor: StaffContext,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: TransferRolesDto,
+  ): Promise<{ id: string }> {
+    return this.credentials.transferRoles(actor, id, body.toStaffUserId, {
+      removeFromSource: body.removeFromSource ?? false,
+    });
   }
 }

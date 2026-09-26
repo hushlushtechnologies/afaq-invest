@@ -14,6 +14,7 @@ export interface Paginated<T> {
 }
 
 export * from './locale';
+export * from './audit';
 export * from './rbac';
 export * from './roles';
 export * from './staff';

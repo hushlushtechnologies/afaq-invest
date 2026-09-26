@@ -26,6 +26,67 @@ export interface UpdateStaffStatus {
   reason?: string;
 }
 
+export function useResetStaffPassword(): UseMutationResult<
+  { temporaryPassword: string },
+  Error,
+  string
+> {
+  return useMutation({
+    mutationFn: (id: string) =>
+      getApiClient().post<{ temporaryPassword: string }>(`/staff/${id}/password`, {}),
+    gcTime: 0,
+  });
+}
+
+export function useChangeStaffEmail(): UseMutationResult<
+  { id: string },
+  Error,
+  { id: string; email: string }
+> {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, email }: { id: string; email: string }) =>
+      getApiClient().patch<{ id: string }>(`/staff/${id}/email`, {
+        email,
+      }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: [STAFF_QUERY_KEY],
+      });
+    },
+  });
+}
+
+export function useTransferRoles(): UseMutationResult<
+  { id: string },
+  Error,
+  { id: string; toStaffUserId: string; removeFromSource: boolean }
+> {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      toStaffUserId,
+      removeFromSource,
+    }: {
+      id: string;
+      toStaffUserId: string;
+      removeFromSource: boolean;
+    }) =>
+      getApiClient().post<{ id: string }>(`/staff/${id}/transfer-roles`, {
+        toStaffUserId,
+        removeFromSource,
+      }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: [STAFF_QUERY_KEY],
+      });
+    },
+  });
+}
+
 /**
  * Update a staff member's basic details.
  *
@@ -62,7 +123,9 @@ export function useUpdateStaffRoles(): UseMutationResult<{ id: string }, Error, 
 
   return useMutation({
     mutationFn: ({ id, roleKeys }: UpdateStaffRoles) =>
-      getApiClient().patch<{ id: string }>(`/staff/${id}/roles`, { roleKeys }),
+      getApiClient().patch<{ id: string }>(`/staff/${id}/roles`, {
+        roleKeys,
+      }),
 
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -72,14 +135,21 @@ export function useUpdateStaffRoles(): UseMutationResult<{ id: string }, Error, 
   });
 }
 
-/** Sends an invitation again and restarts its seven-day clock. */
+/**
+ * Sends an invitation again and restarts its seven-day clock.
+ */
 export function useResendInvitation(): UseMutationResult<{ id: string }, Error, string> {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: string) =>
       getApiClient().post<{ id: string }>(`/staff/${id}/resend-invitation`, {}),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [STAFF_QUERY_KEY] }),
+
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: [STAFF_QUERY_KEY],
+      });
+    },
   });
 }
 

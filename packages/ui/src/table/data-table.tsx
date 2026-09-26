@@ -90,6 +90,22 @@ export interface DataTableProps<TData extends RowData> {
   pageSize?: number;
   /** Offer a "rows per page" choice. */
   pageSizeOptions?: readonly number[];
+
+  /**
+   * Paging handled by the server.
+   *
+   * Without this the table pages through whatever rows it was handed, which
+   * is right for a list held in the browser and wrong for anything fetched a
+   * page at a time — there the rows in hand ARE one page, and re-paging them
+   * hides the rest of the data behind a footer that reports the wrong total.
+   */
+  serverPagination?: {
+    /** One-based, as shown to the reader. */
+    page: number;
+    totalItems: number;
+    onPageChange: (page: number) => void;
+    onPageSizeChange?: (pageSize: number) => void;
+  };
   /** Adds a checkbox column. */
   enableSelection?: boolean;
   /** Receives the selected rows whenever the selection changes (not on every render). */
@@ -118,6 +134,7 @@ export function DataTable<TData extends RowData>({
   empty,
   pageSize = 10,
   pageSizeOptions,
+  serverPagination,
   enableSelection = false,
   onSelectionChange,
   onRowClick,
@@ -165,6 +182,12 @@ export function DataTable<TData extends RowData>({
     getRowId,
     enableRowSelection: enableSelection,
     initialState: { pagination: { pageIndex: 0, pageSize } },
+    // With server paging the rows in hand are already the page, so the table
+    // must not slice them again.
+    manualPagination: serverPagination !== undefined,
+    ...(serverPagination
+      ? { pageCount: Math.max(1, Math.ceil(serverPagination.totalItems / pageSize)) }
+      : {}),
     // The search text is owned by the page (it lives in the toolbar), so it is
     // passed in as controlled state rather than copied into the table.
     state: { rowSelection, globalFilter: deferredSearch },
@@ -184,7 +207,10 @@ export function DataTable<TData extends RowData>({
   }, [rowSelection]);
 
   const pageRows = table.getRowModel().rows;
-  const matchingCount = table.getFilteredRowModel().rows.length;
+  // The server knows the real total; the table only ever sees one page of it.
+  const matchingCount = serverPagination
+    ? serverPagination.totalItems
+    : table.getFilteredRowModel().rows.length;
   const { pageIndex, pageSize: currentPageSize } = table.state.pagination;
   const leafColumns = table.getAllLeafColumns();
   const titleColumn = leafColumns.find((column) => column.columnDef.meta?.mobile === 'title');
@@ -481,6 +507,7 @@ export function DataTable<TData extends RowData>({
           {pageSizeOptions && pageSizeOptions.length > 0 ? (
             <label className="flex items-center gap-2 text-caption text-fg-muted">
               {text.rowsPerPage}
+
               <Select
                 fieldSize="sm"
                 wrapperClassName="w-20"
@@ -493,14 +520,17 @@ export function DataTable<TData extends RowData>({
               />
             </label>
           ) : null}
+
           <Pagination
             className="flex-1"
-            page={pageIndex + 1}
-            pageCount={table.getPageCount()}
-            onPageChange={(page) => table.setPageIndex(page - 1)}
-            totalItems={matchingCount}
-            pageSize={currentPageSize}
             label={`${caption} — ${text.rowsPerPage}`}
+            page={serverPagination ? serverPagination.page : pageIndex + 1}
+            pageCount={table.getPageCount()}
+            onPageChange={(page) =>
+              serverPagination ? serverPagination.onPageChange(page) : table.setPageIndex(page - 1)
+            }
+            totalItems={matchingCount}
+            pageSize={serverPagination ? pageSize : currentPageSize}
           />
         </div>
       ) : null}

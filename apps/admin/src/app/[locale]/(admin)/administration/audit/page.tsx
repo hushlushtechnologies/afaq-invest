@@ -1,13 +1,11 @@
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
-import { InfoCard } from '@afaq/ui';
-import { PermissionGate } from '@/components/auth/permission-gate';
+import { AuditViewer } from '@/components/audit/audit-viewer';
 import { ModulePage } from '@/components/shell/module-page';
 
-/** Built in Phase 27; the tab exists so the section is reachable. */
+/** Administration → Audit. The viewer gates itself on audit.view. */
 export default async function AdministrationAuditPage(): Promise<ReactNode> {
   const t = await getTranslations('moduleTabs');
-  const tc = await getTranslations('common');
 
   return (
     <ModulePage
@@ -15,9 +13,7 @@ export default async function AdministrationAuditPage(): Promise<ReactNode> {
       title={t('administration.audit')}
       description={t('administrationDescription')}
     >
-      <PermissionGate permission="audit.view">
-        <InfoCard tone="neutral">{tc('placeholder')}</InfoCard>
-      </PermissionGate>
+      <AuditViewer />
     </ModulePage>
   );
 }

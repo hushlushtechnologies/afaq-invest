@@ -1,7 +1,16 @@
 'use client';
 
 import { ApiRequestError } from '@afaq/api-client';
-import { Ban, MailPlus, PencilLine, RotateCcw, ShieldCheck, UserX } from 'lucide-react';
+import {
+  AtSign,
+  Ban,
+  KeyRound,
+  MailPlus,
+  PencilLine,
+  RotateCcw,
+  ShieldCheck,
+  UserX,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
 
@@ -26,10 +35,14 @@ export function StaffRowActions({
   staff,
   onEdit,
   onEditRoles,
+  onResetPassword,
+  onChangeEmail,
 }: {
   staff: StaffListItem;
   onEdit: (staff: StaffListItem) => void;
   onEditRoles: (staff: StaffListItem) => void;
+  onResetPassword: (staff: StaffListItem) => void;
+  onChangeEmail: (staff: StaffListItem) => void;
 }): ReactNode {
   const t = useTranslations('staff.actions');
   const tActions = useTranslations('actions');
@@ -75,6 +88,24 @@ export function StaffRowActions({
             label: t('changeRoles'),
             icon: <ShieldCheck />,
             onSelect: () => onEditRoles(staff),
+          },
+        ]
+      : []),
+
+    // Sign-in details: only a Super Admin, and only for somebody who has
+    // actually got an account yet.
+    ...(isSuperAdmin && staff.status !== 'INVITED'
+      ? [
+          {
+            label: t('changeEmail'),
+            icon: <AtSign />,
+            separated: true,
+            onSelect: () => onChangeEmail(staff),
+          },
+          {
+            label: t('resetPassword'),
+            icon: <KeyRound />,
+            onSelect: () => onResetPassword(staff),
           },
         ]
       : []),

@@ -1,5 +1,6 @@
 import type { Session, User } from '@supabase/supabase-js';
 import { redirect } from '@/i18n/navigation';
+import { cache } from 'react';
 import type { AppLocale } from '@/i18n/routing';
 import { createClient } from '@/lib/supabase/server';
 
@@ -10,23 +11,23 @@ import { createClient } from '@/lib/supabase/server';
  * Supabase, while a session read from a cookie is only as trustworthy as the
  * cookie. Anything that decides access uses this.
  */
-export async function getAuthUser(): Promise<User | null> {
+export const getAuthUser = cache(async (): Promise<User | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
   if (error) return null;
   return data.user;
-}
+});
 
 /**
  * The session for handing to the client provider, so the first paint already
  * knows who is signed in. Pair it with getAuthUser() for decisions.
  */
-export async function getServerSession(): Promise<Session | null> {
+export const getServerSession = cache(async (): Promise<Session | null> => {
   const supabase = await createClient();
   const { data } = await supabase.auth.getSession();
   return data.session;
-}
+});
 
 /**
  * The signed-in identity, or a redirect to the login page.
