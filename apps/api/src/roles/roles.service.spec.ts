@@ -27,7 +27,12 @@ function row(overrides: Record<string, unknown> = {}) {
 function makeService(rows: unknown[] | null) {
   const findMany = vi.fn().mockResolvedValue(rows ?? []);
   const findUnique = vi.fn().mockResolvedValue(rows === null ? null : rows[0]);
-  const prisma = { role: { findMany, findUnique } } as unknown as PrismaService;
+  // The service reaches the tables through `prisma.db`, never `prisma` itself.
+  // The stub has to mirror that: a bare { role: … } leaves `prisma.db`
+  // undefined and every call dies on "Cannot read properties of undefined".
+  // The `as unknown as` cast is what let that ship — it silences exactly the
+  // type error that would have caught it, so keep the shape honest by hand.
+  const prisma = { db: { role: { findMany, findUnique } } } as unknown as PrismaService;
   return { service: new RolesService(prisma), findMany };
 }
 

@@ -172,6 +172,12 @@
     "title": "You don’t have access to this page",
     "description": "Your roles don’t include permission for this. If you need it, ask an administrator to add the right role — they can see exactly what each role allows.",
     "goToDashboard": "Go to dashboard",
+    "unresolved": {
+      "title": "We couldn’t check your permissions",
+      "description": "This isn’t about your account — we could not reach the service that says what you’re allowed to do. Try again in a moment. If it keeps happening, tell an administrator that the Admin API is not responding.",
+      "retry": "Try again",
+      "details": "Show technical details"
+    },
     "account": {
       "signOut": "Sign out",
       "not_staff": {

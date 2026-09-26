@@ -50,6 +50,23 @@ const ANY_AUTHENTICATED_STAFF: Record<string, string> = {
   'POST auth/accept-invitation': 'Called before the account is active; it is how you become staff.',
 };
 
+/**
+ * Controller methods that deliberately are not routes.
+ *
+ * Keep this list short. A method on a controller with no route decorator is
+ * usually a route that lost its decorator rather than a helper — which is
+ * exactly how GET /auth/me once disappeared while every test still passed.
+ *
+ * TypeScript's `private` is erased at compile time, so a private helper is an
+ * ordinary prototype method at runtime and shows up here like any other. That
+ * is why these are listed by hand: the check cannot tell intent, only the
+ * absence of a decorator.
+ */
+const INTENTIONAL_NON_ROUTES: Record<string, string> = {
+  'HealthController.checkDatabase':
+    'A private indicator passed to health.check(), not an endpoint of its own.',
+};
+
 interface Route {
   controller: string;
   method: string;
@@ -104,6 +121,54 @@ describe('route protection', () => {
     // If this ever drops to nothing, every other check below passes for the
     // wrong reason.
     expect(routes.length).toBeGreaterThan(10);
+  });
+
+  /**
+   * The list below is a claim that these routes exist and need no permission.
+   * Until this test was added it only ever *permitted* them, so when
+   * GET /auth/me lost its decorator the list went on describing a route that
+   * was no longer served and nothing failed. The Admin Portal, which cannot
+   * draw its sidebar without that route, showed every signed-in person an
+   * empty set of permissions instead.
+   */
+  it.each(Object.keys(ANY_AUTHENTICATED_STAFF))('serves %s', (label) => {
+    const served = routes.map(describeRoute);
+
+    expect(
+      served,
+      `${label} is listed as available to any signed-in staff member, but no such ` +
+        'route is registered. Either it lost its method decorator, or two route ' +
+        'decorators are stacked on one method — Nest keeps only one of them.',
+    ).toContain(label);
+  });
+
+  it('leaves no controller method without a route', () => {
+    const orphans: string[] = [];
+
+    for (const controller of CONTROLLERS) {
+      const prototype = controller.prototype as Record<string, unknown>;
+
+      for (const name of Object.getOwnPropertyNames(prototype)) {
+        if (name === 'constructor') continue;
+
+        const member = prototype[name];
+        if (typeof member !== 'function') continue;
+        if (Reflect.getMetadata(PATH_METADATA, member) !== undefined) continue;
+
+        const label = `${controller.name}.${name}`;
+        if (label in INTENTIONAL_NON_ROUTES) continue;
+
+        orphans.push(label);
+      }
+    }
+
+    expect(
+      orphans,
+      'These controller methods are not reachable over HTTP. A handler that lost ' +
+        'its @Get/@Post decorator is dead code that looks alive, and the route it ' +
+        'used to serve now returns 404. Give it its decorator back, or list it in ' +
+        'INTENTIONAL_NON_ROUTES with a reason.',
+    ).toEqual([]);
   });
 
   it.each(routes.map((route) => [describeRoute(route), route] as const))(

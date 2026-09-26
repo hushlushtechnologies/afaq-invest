@@ -3,10 +3,11 @@
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import type { PermissionKey } from '@afaq/types';
-import { Button, LoadingState, NoPermissionState } from '@afaq/ui';
+import { Button, ErrorState, LoadingState, NoPermissionState } from '@afaq/ui';
 import { Link } from '@/i18n/navigation';
 import { usePermissions } from '@/lib/auth/use-permissions';
-import { AccountBlocked, isBlockingReason } from './account-blocked';
+import { isBlockingReason } from '@/lib/auth/refusals';
+import { AccountBlocked } from './account-blocked';
 
 export interface PermissionGateProps {
   /** Required to see the page. */
@@ -36,7 +37,8 @@ export function PermissionGate({
   children,
 }: PermissionGateProps): ReactNode {
   const t = useTranslations('accessDenied');
-  const { can, canAny, canAll, loading, refusalReason } = usePermissions();
+  const { can, canAny, canAll, loading, unresolved, unresolvedDetail, refusalReason, retry } =
+    usePermissions();
 
   if (loading) return <LoadingState />;
 
@@ -44,6 +46,24 @@ export function PermissionGate({
   // suspended person they lack staff.view would be answering the wrong
   // question entirely.
   if (isBlockingReason(refusalReason)) return <AccountBlocked reason={refusalReason} />;
+
+  // We could not find out what this person may do. Saying "you don't have
+  // permission" here would be a guess dressed up as a decision — and a
+  // misleading one, because the usual cause is that the API is unreachable or
+  // /auth/me is broken, not anything about them. Say what actually happened
+  // and offer to try again.
+  if (unresolved) {
+    return (
+      <ErrorState
+        title={t('unresolved.title')}
+        description={t('unresolved.description')}
+        onRetry={retry}
+        retryLabel={t('unresolved.retry')}
+        details={unresolvedDetail ?? undefined}
+        detailsLabel={t('unresolved.details')}
+      />
+    );
+  }
 
   const allowed =
     (permission ? can(permission) : true) &&

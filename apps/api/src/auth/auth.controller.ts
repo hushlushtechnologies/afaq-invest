@@ -24,12 +24,33 @@ export class AuthController {
    * Who the caller is, and what they may do.
    *
    * The Admin Portal asks once after signing in and uses the answer to decide
-   * what to show. It is a convenience for the interface — every endpoint
-   * still checks permissions itself.
+   * what to show — the whole sidebar depends on it. It is a convenience for
+   * the interface; every endpoint still checks permissions itself.
+   *
+   * Note for anyone editing this file: each route needs its own method
+   * decorator directly above its own method. Nest stores the path and the
+   * verb in single-valued metadata, so stacking two route decorators on one
+   * method silently keeps only the last one applied and the other route
+   * disappears — returning 404 with nothing in the logs to explain it.
+   */
+  @Get('me')
+  @ApiOperation({ summary: 'The signed-in staff member, with roles and permissions' })
+  @ApiOkResponse({ description: 'The caller’s staff context' })
+  @ApiUnauthorizedResponse({ description: 'No valid session' })
+  async me(@CurrentStaff() staff: StaffContext): Promise<StaffContext> {
+    // Keeps "last seen" roughly current without a write on every request.
+    await this.staffContext.touchLastSeen(staff.staffUserId);
+    return staff;
+  }
+
+  /**
+   * Turns an invitation into an active account.
+   *
+   * Reachable while the account is still INVITED — that is the whole point of
+   * it — which is why it carries @AllowInvited. No other route does.
    */
   @Post('accept-invitation')
   @AllowInvited()
-  @Get('me')
   @ApiOperation({ summary: 'Accept an invitation and activate the account' })
   @ApiOkResponse({ description: 'The account is now active' })
   @ApiBadRequestResponse({ description: 'The invitation has expired or was withdrawn' })
@@ -46,12 +67,6 @@ export class AuthController {
     if (token) this.staffContext.forgetToken(token);
 
     return result;
-  }
-  @ApiUnauthorizedResponse({ description: 'No valid session' })
-  async me(@CurrentStaff() staff: StaffContext): Promise<StaffContext> {
-    // Keeps "last seen" roughly current without a write on every request.
-    await this.staffContext.touchLastSeen(staff.staffUserId);
-    return staff;
   }
 
   /**
