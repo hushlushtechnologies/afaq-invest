@@ -2,7 +2,9 @@ import { PATH_METADATA, METHOD_METADATA } from '@nestjs/common/constants.js';
 import { describe, expect, it } from 'vitest';
 import { AuditController } from '../audit/audit.controller.js';
 import { AuthController } from './auth.controller.js';
+import { CompaniesController } from '../companies/companies.controller.js';
 import { HealthController } from '../health/health.controller.js';
+import { InvestmentRulesController } from '../investment-rules/investment-rules.controller.js';
 import { RolesController } from '../roles/roles.controller.js';
 import { StaffController } from '../staff/staff.controller.js';
 import { ALLOW_INVITED_KEY } from './allow-invited.decorator.js';
@@ -36,6 +38,8 @@ const CONTROLLERS: readonly ControllerConstructor[] = [
   StaffController,
   RolesController,
   AuditController,
+  CompaniesController,
+  InvestmentRulesController,
 ];
 
 /**

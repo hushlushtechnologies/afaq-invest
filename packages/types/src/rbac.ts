@@ -117,6 +117,27 @@ export const PERMISSIONS = [
   { key: 'company.view', resource: 'COMPANY', action: 'VIEW', description: 'See companies' },
   { key: 'company.create', resource: 'COMPANY', action: 'CREATE', description: 'Add companies' },
   { key: 'company.edit', resource: 'COMPANY', action: 'EDIT', description: 'Change companies' },
+  {
+    // One permission rather than separate activate / disable / feature /
+    // reorder ones: they are the same job — deciding how an existing company
+    // appears and whether it trades. Nobody sensibly features a company but
+    // may not deactivate it.
+    key: 'company.manage',
+    resource: 'COMPANY',
+    action: 'MANAGE',
+    description: 'Activate, disable, feature and reorder companies',
+  },
+  {
+    // Separate from company.edit on purpose. Editing is housekeeping; this is
+    // a compliance decision that says an outside company has been checked and
+    // may take investors' money. Whoever onboards a partner should not also be
+    // the one who certifies them — a control the same person can grant
+    // themselves is not a control.
+    key: 'company.verify',
+    resource: 'COMPANY',
+    action: 'VERIFY',
+    description: 'Confirm an outside company has passed its checks',
+  },
   { key: 'company.delete', resource: 'COMPANY', action: 'DELETE', description: 'Remove companies' },
 
   // --- partners
@@ -373,6 +394,10 @@ export const SYSTEM_ROLES = [
       'company.view',
       'company.create',
       'company.edit',
+      'company.manage',
+      // Deliberately not company.verify: see that permission's note. This role
+      // onboards outside companies, so it must not also be the role that
+      // certifies them as checked.
       'partner.view',
       'partner.create',
       'partner.edit',
@@ -399,6 +424,10 @@ export const SYSTEM_ROLES = [
       'dashboard.view',
       'investor.view',
       'investor.edit',
+      // Verifying an outside company belongs here rather than with whoever
+      // onboarded it. Needs company.view too, or there is nothing to act on.
+      'company.view',
+      'company.verify',
       'kyc.view',
       'kyc.verify',
       'kyc.approve',

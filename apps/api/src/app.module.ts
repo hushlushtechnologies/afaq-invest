@@ -6,6 +6,8 @@ import { validateEnv } from './config/env.validation.js';
 import { HealthModule } from './health/health.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { AuditModule } from './audit/audit.module.js';
+import { CompaniesModule } from './companies/companies.module.js';
+import { InvestmentRulesModule } from './investment-rules/investment-rules.module.js';
 import { RolesModule } from './roles/roles.module.js';
 import { StaffModule } from './staff/staff.module.js';
 import { SupabaseModule } from './supabase/supabase.module.js';
@@ -25,6 +27,8 @@ import { SupabaseModule } from './supabase/supabase.module.js';
     AuditModule,
     RolesModule,
     StaffModule,
+    CompaniesModule,
+    InvestmentRulesModule,
     HealthModule,
   ],
 })

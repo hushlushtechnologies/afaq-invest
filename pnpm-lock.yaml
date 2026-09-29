@@ -690,6 +690,9 @@ importers:
 
   packages/validation:
     dependencies:
+      '@afaq/types':
+        specifier: workspace:*
+        version: link:../types
       zod:
         specifier: ^4.6.5
         version: 4.6.5

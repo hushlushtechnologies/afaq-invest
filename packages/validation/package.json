@@ -18,6 +18,7 @@
     "clean": "node ../../scripts/clean.mjs dist .turbo"
   },
   "dependencies": {
+    "@afaq/types": "workspace:*",
     "zod": "^4.6.5"
   }
 }

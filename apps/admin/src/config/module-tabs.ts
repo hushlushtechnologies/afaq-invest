@@ -25,6 +25,12 @@ export const MODULE_TABS: Partial<Record<NavModule['key'], readonly ModuleSectio
     { key: 'kyc', href: '/investors/kyc', permissions: ['kyc.view'] },
     { key: 'compliance', href: '/investors/compliance', permissions: ['kyc.view'] },
   ],
+  investments: [
+    // Opportunities arrive in a later phase. Rules is the only section that
+    // exists, and a one-tab strip is still worth having: it is where the
+    // second tab will appear, and the module reads the same as every other.
+    { key: 'rules', href: '/investments/rules', permissions: ['investment_rule.view'] },
+  ],
   finance: [
     { key: 'payments', href: '/finance/payments', permissions: ['finance.view'] },
     { key: 'ledger', href: '/finance/ledger', permissions: ['finance.view'] },

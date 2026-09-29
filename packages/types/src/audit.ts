@@ -15,6 +15,8 @@ export const AUDIT_CATEGORIES = [
   'PERMISSION',
   'SECURITY',
   'SETTINGS',
+  'COMPANY',
+  'INVESTMENT_RULE',
 ] as const;
 
 export type AuditCategory = (typeof AUDIT_CATEGORIES)[number];

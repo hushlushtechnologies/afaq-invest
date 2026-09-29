@@ -73,7 +73,6 @@
     "noPermissionTitle": "You don’t have access to this",
     "noPermissionDescription": "Your role doesn’t include permission to view this page. If you need access, ask an administrator."
   },
-
   "navGroups": {
     "modules": "Modules",
     "overview": "Overview",
@@ -83,7 +82,6 @@
   },
   "shell": {
     "skipToContent": "Skip to content",
-
     "preferences": "Preferences",
     "collapseSidebar": "Collapse sidebar",
     "expandSidebar": "Expand sidebar",
@@ -166,6 +164,10 @@
       "ledger": "Ledger",
       "distributions": "Distributions",
       "reconciliation": "Reconciliation"
+    },
+    "investmentsDescription": "Tier rules, returns and the settings behind them.",
+    "investments": {
+      "rules": "Rules"
     }
   },
   "accessDenied": {
@@ -198,7 +200,6 @@
       }
     }
   },
-
   "audit": {
     "title": "Audit trail",
     "viewLabel": "Which record to read",
@@ -217,14 +218,21 @@
       "actor": "Who",
       "target": "Record"
     },
-    "filters": { "category": "Area", "allCategories": "All areas", "from": "From", "to": "To" },
+    "filters": {
+      "category": "Area",
+      "allCategories": "All areas",
+      "from": "From",
+      "to": "To"
+    },
     "categories": {
       "AUTH": "Sign-in",
       "STAFF": "Staff",
       "ROLE": "Roles",
       "PERMISSION": "Permissions",
       "SECURITY": "Security",
-      "SETTINGS": "Settings"
+      "SETTINGS": "Settings",
+      "COMPANY": "Companies",
+      "INVESTMENT_RULE": "Investment rules"
     },
     "actions": {
       "staff": {
@@ -287,7 +295,6 @@
       }
     }
   },
-
   "auth": {
     "reset": {
       "title": "Set a new password",
@@ -554,7 +561,165 @@
       "refresh": "Refresh"
     }
   },
-
+  "companies": {
+    "title": "Companies",
+    "description": "Afaq’s own companies and the approved partners investors can put money into.",
+    "searchPlaceholder": "Search by name, legal name or sector",
+    "loadError": "The company list could not be loaded.",
+    "featured": "Featured",
+    "columns": {
+      "name": "Company",
+      "type": "Ownership",
+      "status": "Status",
+      "verification": "Verification",
+      "order": "Order",
+      "updated": "Last updated"
+    },
+    "type": {
+      "INTERNAL": "Our company",
+      "THIRD_PARTY": "Partner"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "SUSPENDED": "Suspended"
+    },
+    "verification": {
+      "NOT_REQUIRED": "Not required",
+      "PENDING": "Awaiting checks",
+      "UNDER_REVIEW": "Under review",
+      "VERIFIED": "Verified",
+      "REJECTED": "Rejected",
+      "notApplicable": "—"
+    },
+    "filters": {
+      "type": "Ownership",
+      "allTypes": "All companies",
+      "status": "Status",
+      "allStatuses": "Any status",
+      "verification": "Verification",
+      "allVerifications": "Any verification",
+      "sector": "Sector",
+      "allSectors": "All sectors",
+      "featured": "Featured only"
+    },
+    "empty": {
+      "title": "No companies match that",
+      "description": "Try a different search, or clear the filters to see them all."
+    },
+    "detail": {
+      "addedOn": "Added {date}",
+      "visitWebsite": "Visit website",
+      "backToList": "Back to companies",
+      "about": "About",
+      "noDescription": "No description yet. Add one so investors know what this company does.",
+      "contact": "Contact",
+      "website": "Website",
+      "email": "Email",
+      "phone": "Phone",
+      "noContact": "No contact details yet.",
+      "closed": {
+        "title": "Not open for investment",
+        "notActive": "This company is {status}, so it does not appear in the marketplace and takes no new investment. Anything already invested in it is kept.",
+        "notVerified": "This is a partner company and its checks are not complete. It cannot take investment until it is verified."
+      },
+      "missing": {
+        "title": "No such company",
+        "description": "The address may be mistyped, or the company may have been renamed. Open it from the list instead."
+      },
+      "loadError": {
+        "title": "This company could not be loaded",
+        "description": "The request did not get through. Try again, and if it keeps happening tell an administrator."
+      },
+      "opportunities": {
+        "title": "Investment opportunities",
+        "description": "What investors can put money into at this company.",
+        "empty": {
+          "title": "No opportunities yet",
+          "description": "Once the investment engine is in place, opportunities for {name} will be listed here with their tiers and returns.",
+          "blocked": "{name} is not open for investment, so no opportunities can be offered while that is the case."
+        }
+      }
+    },
+    "create": {
+      "action": "Add company",
+      "title": "Add a company",
+      "description": "Afaq’s own companies and approved partners both live here.",
+      "name": "Company name",
+      "namePlaceholder": "Afaq Al Manzil Properties",
+      "nameHelp": "What investors will see. The web address is made from this once, and does not change if you rename the company later.",
+      "legalName": "Legal name",
+      "legalNamePlaceholder": "Afaq Al Manzil Properties LLC",
+      "legalNameHelp": "The registered name, if it differs. Leave blank if it is the same.",
+      "type": "Ownership",
+      "typeHelp": "Chosen once. It decides whether the company goes through partner verification, and cannot be changed afterwards.",
+      "sector": "Sector",
+      "sectorPlaceholder": "Real Estate",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "What this company does, in a few sentences.",
+      "website": "Website",
+      "contactEmail": "Contact email",
+      "contactPhone": "Contact phone",
+      "displayOrder": "Marketplace position",
+      "displayOrderHelp": "Lower numbers come first. Existing companies use 10, 20, 30 and so on, so a gap leaves room to move things later.",
+      "featured": "Feature in the marketplace",
+      "featuredHelp": "Featured companies appear ahead of the rest.",
+      "logoNote": "Logo and cover image are added later, once file uploads are in place. The company will show its initials until then.",
+      "submit": "Add company",
+      "cancel": "Cancel",
+      "done": "Done",
+      "doneTitle": "Company added",
+      "doneBody": "{name} is now in the marketplace. Add its logo and opportunities when you are ready.",
+      "failed": "The company could not be added."
+    },
+    "edit": {
+      "action": "Edit",
+      "title": "Edit company",
+      "description": "Change {name}’s details.",
+      "name": "Company name",
+      "nameHelp": "The web address stays /{slug} even if you rename the company, so saved links keep working.",
+      "legalName": "Legal name",
+      "sector": "Sector",
+      "descriptionLabel": "Description",
+      "website": "Website",
+      "contactEmail": "Contact email",
+      "contactPhone": "Contact phone",
+      "submit": "Save changes",
+      "cancel": "Cancel",
+      "failed": "Those changes could not be saved."
+    },
+    "actions": {
+      "menuLabel": "Actions for {name}",
+      "feature": "Feature in marketplace",
+      "unfeature": "Remove from featured",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "suspend": "Suspend",
+      "failed": "That change could not be saved.",
+      "reason": {
+        "label": "Reason (optional)",
+        "placeholder": "Licence expired, contract ended, under investigation…",
+        "help": "Kept in the audit trail. It is the only place anybody will look to find out why."
+      },
+      "confirm": {
+        "featureTitle": "Feature {name}?",
+        "featureBody": "It will appear near the top of the marketplace, ahead of companies that are not featured.",
+        "featureConfirm": "Feature it",
+        "unfeatureTitle": "Remove {name} from featured?",
+        "unfeatureBody": "It stays available to investors, but loses its place at the top of the marketplace.",
+        "unfeatureConfirm": "Remove",
+        "activateTitle": "Activate {name}?",
+        "activateBody": "Investors will be able to see it and, once it has opportunities, invest in it.",
+        "activateConfirm": "Activate",
+        "deactivateTitle": "Deactivate {name}?",
+        "deactivateBody": "It disappears from the marketplace and takes no new investment. Everything already invested in it is kept, and you can activate it again at any time.",
+        "deactivateConfirm": "Deactivate",
+        "suspendTitle": "Suspend {name}?",
+        "suspendBody": "This stops it trading immediately and records that a decision was taken. Use it when something is wrong, rather than to tidy up a list — deactivating is the quiet option.",
+        "suspendConfirm": "Suspend it"
+      }
+    }
+  },
   "settings": {
     "title": "Settings",
     "description": "Your account, your preferences and how Afaq Invest is set up.",
@@ -609,7 +774,10 @@
         "title": "Notifications",
         "description": "Choose what you are told about, and where.",
         "note": "These switches work here, but saving them to your account is part of a later sprint.",
-        "channels": { "inApp": "In app", "email": "Email" },
+        "channels": {
+          "inApp": "In app",
+          "email": "Email"
+        },
         "topics": {
           "kyc": {
             "title": "KYC and verification",
@@ -623,7 +791,10 @@
             "title": "Investments",
             "description": "New requests and funding milestones."
           },
-          "reports": { "title": "Reports", "description": "Scheduled reports ready to download." }
+          "reports": {
+            "title": "Reports",
+            "description": "Scheduled reports ready to download."
+          }
         }
       },
       "organisation": {
@@ -643,6 +814,76 @@
           "description": "Logo and colours used on investor-facing documents."
         }
       }
+    }
+  },
+  "investmentRules": {
+    "title": "Investment rules",
+    "description": "The tiers, returns and terms every investment is priced against.",
+    "loadError": "Could not load the investment rules.",
+    "tierCount": "{count, plural, =0 {No tiers} one {# tier} other {# tiers}}",
+    "until": "until {when}",
+    "status": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Live",
+      "ARCHIVED": "Archived"
+    },
+    "scope": {
+      "GLOBAL": "Platform-wide",
+      "COMPANY": "One company"
+    },
+    "mode": {
+      "LOCKED": "Locked",
+      "UNLOCKED": "Unlocked"
+    },
+    "basis": {
+      "MONTHLY": "Monthly",
+      "QUARTERLY": "Quarterly",
+      "ANNUAL": "Annual"
+    },
+    "basisSuffix": {
+      "MONTHLY": "a month",
+      "QUARTERLY": "a quarter",
+      "ANNUAL": "a year"
+    },
+    "payout": {
+      "MONTHLY": "Monthly",
+      "QUARTERLY": "Quarterly",
+      "SEMI_ANNUAL": "Twice a year",
+      "ANNUAL": "Yearly",
+      "ON_MATURITY": "At maturity"
+    },
+    "columns": {
+      "name": "Ladder",
+      "status": "Status",
+      "scope": "Applies to",
+      "basis": "Rates quoted",
+      "live": "Went live",
+      "updated": "Updated"
+    },
+    "filters": {
+      "status": "Status",
+      "scope": "Applies to",
+      "allStatuses": "Any status",
+      "allScopes": "Anywhere"
+    },
+    "empty": {
+      "title": "No investment rules yet",
+      "description": "Run the database seed to create the starter ladder, or add one here."
+    },
+    "settings": {
+      "title": "Platform settings",
+      "description": "What every ladder is judged against.",
+      "loadError": "Could not load the investment settings.",
+      "minimum": "Minimum investment",
+      "minimumNote": "Every ladder starts here",
+      "cap": "Maximum return",
+      "capYearly": "{percent}% a year",
+      "currency": "Currency",
+      "stepUp": "Publishing",
+      "stepUpOn": "Password required",
+      "stepUpOff": "No confirmation",
+      "stepUpNote": "Your own password confirms a change",
+      "stepUpOffNote": "Anyone with permission can publish"
     }
   }
 }

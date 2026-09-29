@@ -3,6 +3,14 @@ import type { ReactNode } from 'react';
 import { InfoCard } from '@afaq/ui';
 import { ModulePage } from '@/components/shell/module-page';
 
+/**
+ * Investors → All.
+ *
+ * Placeholder until the Investor phases. It lives here rather than under
+ * /investments, where a copy of it sat outside the admin layout group and so
+ * rendered with no sidebar — while the tab that points at this address
+ * returned a 404.
+ */
 export default async function InvestorsAllPage(): Promise<ReactNode> {
   const t = await getTranslations('moduleTabs');
   const tc = await getTranslations('common');
@@ -12,7 +20,6 @@ export default async function InvestorsAllPage(): Promise<ReactNode> {
       module="investors"
       title={t('investors.all')}
       description={t('investorsDescription')}
-      counts={{ kyc: 7 }}
     >
       <InfoCard tone="neutral">{tc('placeholder')}</InfoCard>
     </ModulePage>

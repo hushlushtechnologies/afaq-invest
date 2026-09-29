@@ -1,5 +1,3 @@
-export type CompanyType = 'INTERNAL' | 'THIRD_PARTY';
-
 export interface ApiError {
   statusCode: number;
   message: string;
@@ -18,3 +16,5 @@ export * from './audit';
 export * from './rbac';
 export * from './roles';
 export * from './staff';
+export * from './company';
+export * from './investment';

@@ -1,8 +1,21 @@
+import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
 import { PageShell } from '@afaq/ui';
+import { CompaniesDirectory } from '@/components/companies/companies-directory';
 
-export default function CompaniesPage(): ReactNode {
-  const t = useTranslations();
-  return <PageShell title={t('nav.companies')} description={t('common.placeholder')} />;
+/**
+ * Companies.
+ *
+ * The page renders on the server; the directory needs the browser for search,
+ * filters and paging. No module tabs: companies has no sections yet, and an
+ * empty tab strip is worse than none.
+ */
+export default async function CompaniesPage(): Promise<ReactNode> {
+  const t = await getTranslations('companies');
+
+  return (
+    <PageShell title={t('title')} description={t('description')}>
+      <CompaniesDirectory />
+    </PageShell>
+  );
 }
