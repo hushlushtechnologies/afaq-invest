@@ -1,6 +1,6 @@
 import { Transform, Type } from 'class-transformer';
 import { IsIn, IsInt, IsNumber, IsOptional, IsUUID, Max, Min } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   INVESTMENT_MODES,
   RULE_SET_SCOPES,
@@ -60,13 +60,13 @@ export class ListRuleSetsDto {
  * here is stored — it is a question, not a request to invest.
  */
 export class ResolveTermsDto {
-  @ApiPropertyOptional({ example: 500_000, minimum: 0 })
+  @ApiProperty({ example: 500_000, minimum: 0 })
   @Type(() => Number)
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   amount!: number;
 
-  @ApiPropertyOptional({ enum: INVESTMENT_MODES, default: 'LOCKED' })
+  @ApiProperty({ enum: INVESTMENT_MODES })
   @IsIn(INVESTMENT_MODES)
   mode!: InvestmentMode;
 

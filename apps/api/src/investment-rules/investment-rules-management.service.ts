@@ -160,6 +160,46 @@ export class InvestmentRulesManagementService {
       throw new BadRequestException({ reason: 'no_change', message: 'Nothing to change.' });
     }
 
+    /**
+     * Switching step-up off requires step-up.
+     *
+     * Without this the control removes itself: anybody holding
+     * investment_rule.manage could turn the password requirement off and then
+     * publish whatever they liked, and the audit trail would show two
+     * ordinary-looking changes. A control that can be disabled without
+     * satisfying it is not a control.
+     *
+     * Only on the transition from on to off. Turning it on, or changing any
+     * other setting, is an ordinary edit.
+     */
+    const disablingStepUp =
+      changes.requireStepUpToPublish === false && current.requireStepUpToPublish;
+
+    if (disablingStepUp) {
+      try {
+        await this.stepUp.verifyPassword(actor.email, input.password);
+      } catch (error) {
+        // Recorded even though nothing changed: an attempt to remove this
+        // particular control is worth seeing in the trail. SECURITY rather
+        // than INVESTMENT_RULE — no rule changed, somebody failed at a door.
+        await this.prisma.db.auditLog.create({
+          data: {
+            actorStaffUserId: actor.staffUserId,
+            actorEmail: actor.email,
+            category: 'SECURITY',
+            action: 'investment_rule.step_up_disable_refused',
+            targetType: 'InvestmentSettings',
+            targetId: 'global',
+            targetLabel: 'Investment settings',
+            // No password, no token, nothing but the fact of the refusal.
+            metadata: { reason: 'step_up_failed' },
+          },
+        });
+
+        throw error;
+      }
+    }
+
     await this.prisma.db.$transaction(async (tx: PrismaTransactionClient) => {
       await tx.investmentSettings.update({
         where: { id: 'global' },
@@ -183,6 +223,7 @@ export class InvestmentRulesManagementService {
           targetLabel: 'Investment settings',
           before,
           after: changes,
+          ...(disablingStepUp ? { metadata: { stepUp: 'own_password' } } : {}),
         },
       });
     });

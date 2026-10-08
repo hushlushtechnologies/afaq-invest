@@ -25,6 +25,12 @@ export interface UpdateInvestmentSettingsBody {
   maxRoiBasis?: RoiBasis;
   defaultNoticePeriodDays?: number;
   requireStepUpToPublish?: boolean;
+  /**
+   * The administrator's own password. The API requires it only when turning
+   * step-up off — a control that can be disabled without satisfying it is not
+   * a control. Held for the length of the request and never stored.
+   */
+  password?: string;
 }
 
 export function useUpdateInvestmentSettings(): UseMutationResult<

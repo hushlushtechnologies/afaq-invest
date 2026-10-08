@@ -2,10 +2,12 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState, type ReactNode } from 'react';
+import { Layers } from 'lucide-react';
 
 import { RULE_SET_SCOPES, RULE_SET_STATUSES, type Locale, type RuleSetListItem } from '@afaq/types';
 
 import {
+  Button,
   createDataTableColumns,
   DataTable,
   FilterBar,
@@ -17,6 +19,8 @@ import { formatRelativeTime } from '@afaq/utils';
 import { Link } from '@/i18n/navigation';
 import { useDataTableLabels, useTableToolbarLabels } from '@/lib/i18n/use-component-labels';
 import { useRuleSetList, type RuleSetListQuery } from '@/lib/investment-rules/use-investment-rules';
+import { Can } from '@/components/auth/can';
+import { CreateRuleSetDrawer } from './create-rule-set-drawer';
 import { RuleSetScopeBadge, RuleSetStatusBadge } from './rule-set-badges';
 
 const column = createDataTableColumns<RuleSetListItem>();
@@ -44,6 +48,7 @@ export function RuleSetsTable(): ReactNode {
   const toolbarLabels = useTableToolbarLabels();
 
   const [query, setQuery] = useState<RuleSetListQuery>({ page: 1, pageSize: 25 });
+  const [creating, setCreating] = useState(false);
 
   const { data, isPending, isError, refetch } = useRuleSetList(query);
 
@@ -148,6 +153,13 @@ export function RuleSetsTable(): ReactNode {
         {...toolbarLabels}
         // No onSearchChange, so the toolbar renders no search box — see the
         // note on this component for why rule sets do not need one.
+        actions={
+          <Can permission="investment_rule.manage">
+            <Button variant="gradient" iconStart={<Layers />} onClick={() => setCreating(true)}>
+              {t('create.action')}
+            </Button>
+          </Can>
+        }
         filters={
           <>
             <select
@@ -221,6 +233,8 @@ export function RuleSetsTable(): ReactNode {
             setQuery((current) => ({ ...current, pageSize, page: 1 })),
         }}
       />
+
+      <CreateRuleSetDrawer open={creating} onClose={() => setCreating(false)} />
     </div>
   );
 }

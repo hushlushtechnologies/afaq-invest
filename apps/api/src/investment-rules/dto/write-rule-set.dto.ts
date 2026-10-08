@@ -304,8 +304,28 @@ export class UpdateInvestmentSettingsDto {
    * any other. It cannot be turned off as part of the same request that
    * publishes a ladder — that would defeat it entirely.
    */
+  /**
+   * Turning this off removes the only control standing between a session left
+   * open and a change to what the business owes people — so switching it off
+   * requires the password it is switching off. Otherwise the control could
+   * remove itself, which is no control at all.
+   */
   @ApiPropertyOptional()
   @IsBoolean()
   @IsOptional()
   requireStepUpToPublish?: boolean;
+
+  /**
+   * The administrator's own password, required only when turning step-up off.
+   *
+   * Never stored, logged or echoed back. See StepUpService.
+   */
+  @ApiPropertyOptional({
+    description: 'Your own password. Required only when switching step-up off.',
+  })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(200)
+  @IsOptional()
+  password?: string;
 }
