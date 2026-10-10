@@ -1,20 +1,39 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import type { ReactNode } from 'react';
-import type { AuditLogListItem, Locale } from '@afaq/types';
-import { Badge, Button, Drawer } from '@afaq/ui';
+import { useLocale, useTranslations } from 'next-intl';
+import { useState, type ReactNode } from 'react';
+import type { AuditCategory, AuditLogListItem, Locale } from '@afaq/types';
+import { Badge, Button, Drawer, InfoCard, type BadgeVariant } from '@afaq/ui';
 import { formatDateTime } from '@afaq/utils';
-import { useLocale } from 'next-intl';
 import { useActionLabel } from './audit-action-label';
+import { AuditChanges } from './audit-changes';
+import { AuditLadderDiff, hasRecordedLadder } from './audit-ladder-diff';
+import { AuditMetadata } from './audit-metadata';
 
 /**
  * One audit entry in full, including what changed.
  *
- * The before and after are shown side by side rather than as a raw blob: the
- * question somebody opens this to answer is "what actually changed?", and two
- * columns answer it at a glance where a JSON dump does not.
+ * Four sections, in the order somebody reads them: who and when, the tiers if
+ * the entry recorded any, the field-by-field change, and the extra detail.
+ * The stored record itself is last and folded away — it is the answer to "the
+ * summary above is not telling me what I need", not the first thing anybody
+ * should have to read.
+ *
+ * The tiers come before the change table on purpose. An entry that publishes
+ * a rule set has one meaningful payload, the ladder, and putting it after a
+ * table of three scalar fields buries it.
  */
+const CATEGORY_TONE: Record<AuditCategory, BadgeVariant> = {
+  AUTH: 'neutral',
+  STAFF: 'info',
+  ROLE: 'info',
+  PERMISSION: 'warning',
+  SECURITY: 'danger',
+  SETTINGS: 'neutral',
+  COMPANY: 'info',
+  INVESTMENT_RULE: 'primary',
+};
+
 export function AuditEntryDrawer({
   entry,
   onClose,
@@ -23,87 +42,104 @@ export function AuditEntryDrawer({
   onClose: () => void;
 }): ReactNode {
   const t = useTranslations('audit.detail');
+  const tCategories = useTranslations('audit.categories');
   const locale = useLocale() as Locale;
   const actionLabel = useActionLabel();
 
-  const keys = [...new Set([...objectKeys(entry?.before), ...objectKeys(entry?.after)])];
+  const [showRaw, setShowRaw] = useState(false);
+
+  const label = entry ? actionLabel(entry.action) : null;
+
+  // The ladder renderer owns this field, so the change table leaves it out
+  // rather than showing a row of JSON beside a perfectly readable section.
+  const ladderShown = hasRecordedLadder(entry?.after) || hasRecordedLadder(entry?.before);
+
+  function close(): void {
+    // Folded away again on every open, so one entry's raw payload is not
+    // still on screen when the next one is opened.
+    setShowRaw(false);
+    onClose();
+  }
 
   return (
     <Drawer
       open={entry !== null}
-      onClose={onClose}
+      onClose={close}
       side="end"
       size="lg"
-      title={entry ? actionLabel(entry.action) : ''}
+      title={label?.text ?? ''}
       description={entry ? formatDateTime(entry.occurredAt, { locale }) : undefined}
       footer={
-        <Button variant="outline" onClick={onClose}>
+        <Button variant="outline" onClick={close}>
           {t('close')}
         </Button>
       }
     >
       <div className="space-y-5">
+        {/* Said rather than left to be guessed at: a dotted key in the title
+            is a gap in this build, not a strangely named event. */}
+        {entry && label && !label.known ? (
+          <InfoCard tone="neutral">{t('unknownAction')}</InfoCard>
+        ) : null}
+
         <dl className="grid gap-3 sm:grid-cols-2">
           <Fact label={t('actor')} value={entry?.actorEmail} />
           <Fact label={t('target')} value={entry?.targetLabel ?? entry?.targetType} />
           <Fact
             label={t('category')}
-            value={entry ? <Badge size="sm">{entry.category}</Badge> : null}
+            value={
+              entry ? (
+                <Badge size="sm" variant={CATEGORY_TONE[entry.category] ?? 'neutral'}>
+                  {tCategories.has(entry.category as never)
+                    ? tCategories(entry.category as never)
+                    : entry.category}
+                </Badge>
+              ) : null
+            }
           />
           {/* Only shown when we have one: most entries are written by the API
               on behalf of somebody already signed in. */}
           {entry?.ipAddress ? <Fact label={t('ipAddress')} value={entry.ipAddress} /> : null}
         </dl>
 
-        {keys.length > 0 ? (
-          <section className="space-y-2">
-            <h3 className="text-label font-medium text-fg">{t('changes')}</h3>
+        {entry ? <AuditLadderDiff before={entry.before} after={entry.after} /> : null}
 
-            <table className="w-full text-body-small">
-              <thead>
-                <tr className="text-caption text-fg-muted">
-                  <th scope="col" className="py-1 text-start font-medium">
-                    {t('field')}
-                  </th>
-                  <th scope="col" className="py-1 text-start font-medium">
-                    {t('before')}
-                  </th>
-                  <th scope="col" className="py-1 text-start font-medium">
-                    {t('after')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-subtle">
-                {keys.map((key) => {
-                  const before = valueOf(entry?.before, key);
-                  const after = valueOf(entry?.after, key);
-                  const changed = before !== after;
-
-                  return (
-                    <tr key={key}>
-                      <th scope="row" className="py-2 text-start font-normal text-fg-secondary">
-                        {key}
-                      </th>
-                      <td className="py-2 text-fg-subtle">{before || '—'}</td>
-                      {/* Only the new value is emphasised; the old one is
-                          context, not news. */}
-                      <td className={changed ? 'py-2 font-medium text-fg' : 'py-2 text-fg-subtle'}>
-                        {after || '—'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </section>
+        {entry ? (
+          <AuditChanges
+            before={entry.before}
+            after={entry.after}
+            skip={ladderShown ? ['tiers'] : []}
+          />
         ) : null}
 
-        {entry?.metadata ? (
+        {entry ? <AuditMetadata metadata={entry.metadata} /> : null}
+
+        {/* The record as stored. Everything above is a reading of it, and a
+            reading can be wrong or incomplete — for an entry written by an
+            older build, or one carrying a field this version has never heard
+            of, this is the only honest answer. */}
+        {entry && (entry.before || entry.after || entry.metadata) ? (
           <section className="space-y-2">
-            <h3 className="text-label font-medium text-fg">{t('metadata')}</h3>
-            <pre className="bg-surface-subtle overflow-x-auto rounded-lg p-3 text-caption text-fg-secondary">
-              {JSON.stringify(entry.metadata, null, 2)}
-            </pre>
+            <Button variant="ghost" size="sm" onClick={() => setShowRaw((shown) => !shown)}>
+              {showRaw ? t('hideRaw') : t('showRaw')}
+            </Button>
+
+            {showRaw ? (
+              <>
+                <p className="text-caption text-fg-muted">{t('rawNote')}</p>
+                <pre className="bg-surface-subtle overflow-x-auto rounded-lg p-3 text-caption text-fg-secondary">
+                  {JSON.stringify(
+                    {
+                      ...(entry.before ? { before: entry.before } : {}),
+                      ...(entry.after ? { after: entry.after } : {}),
+                      ...(entry.metadata ? { metadata: entry.metadata } : {}),
+                    },
+                    null,
+                    2,
+                  )}
+                </pre>
+              </>
+            ) : null}
           </section>
         ) : null}
       </div>
@@ -118,21 +154,4 @@ function Fact({ label, value }: { label: string; value: ReactNode }): ReactNode 
       <dd className="text-body-small text-fg">{value ?? '—'}</dd>
     </div>
   );
-}
-
-function objectKeys(value: unknown): string[] {
-  return value && typeof value === 'object' ? Object.keys(value as object) : [];
-}
-
-/** Arrays of roles read better as a list than as JSON. */
-function valueOf(source: unknown, key: string): string {
-  if (!source || typeof source !== 'object') return '';
-
-  const value = (source as Record<string, unknown>)[key];
-
-  if (value === undefined || value === null) return '';
-  if (Array.isArray(value)) return value.join(', ');
-  if (typeof value === 'object') return JSON.stringify(value);
-
-  return String(value);
 }

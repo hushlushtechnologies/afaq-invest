@@ -33,3 +33,13 @@ export { PrismaClient };
  * manually omitting connection-level methods from PrismaClient.
  */
 export type PrismaTransactionClient = Prisma.TransactionClient;
+
+/**
+ * A value Prisma will accept in a Json column.
+ *
+ * Exported because `Record<string, unknown>` is not one, and rightly: unknown
+ * could be a Date or a function, neither of which survives being stored as
+ * JSON. Typing audit payloads with this makes the compiler prove they are
+ * storable, instead of the database discovering they are not.
+ */
+export type InputJsonValue = Prisma.InputJsonValue;

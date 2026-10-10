@@ -232,24 +232,71 @@
       "SECURITY": "Security",
       "SETTINGS": "Settings",
       "COMPANY": "Companies",
-      "INVESTMENT_RULE": "Investment rules"
+      "INVESTMENT_RULE": "Investment rules",
+      "OPPORTUNITY": "Investment opportunities",
+      "INVESTOR": "Investors"
     },
     "actions": {
+      "company": {
+        "created": "Company added",
+        "updated": "Company details changed",
+        "activated": "Company activated",
+        "deactivated": "Company deactivated",
+        "suspended": "Company suspended",
+        "verification_changed": "Verification changed",
+        "featured": "Featured on the marketplace",
+        "unfeatured": "Removed from featured",
+        "reordered": "Marketplace order changed"
+      },
+      "investment_rule": {
+        "settings_changed": "Investment settings changed",
+        "step_up_disabled": "Password confirmation switched off",
+        "step_up_disable_refused": "Refused: switching off password confirmation",
+        "draft_created": "Rule set drafted",
+        "draft_updated": "Draft details changed",
+        "ladder_replaced": "Tiers rewritten",
+        "published": "Rule set published",
+        "publish_refused": "Refused: publishing a rule set",
+        "archived": "Rule set archived",
+        "draft_deleted": "Draft deleted"
+      },
+      "role": {
+        "created": "Role created",
+        "updated": "Role changed",
+        "deleted": "Role deleted"
+      },
       "staff": {
         "invited": "Staff member invited",
         "invitation_accepted": "Invitation accepted",
         "invitation_resent": "Invitation sent again",
         "details_changed": "Details changed",
         "roles_changed": "Roles changed",
+        "email_changed": "Email address changed",
+        "password_reset_by_admin": "Password reset by an administrator",
+        "roles_transferred": "Roles transferred from another account",
         "suspended": "Access suspended",
         "disabled": "Account closed",
         "active": "Account reactivated",
         "super_admin_bootstrapped": "First Super Admin created"
       },
-      "role": {
-        "created": "Role created",
-        "updated": "Role changed",
-        "deleted": "Role deleted"
+      "opportunity": {
+        "created": "Investment opportunity created",
+        "updated": "Investment opportunity details updated",
+        "draft_deleted": "Investment opportunity draft deleted",
+        "opened": "Investment opportunity opened for investment",
+        "suspended": "Investment opportunity suspended",
+        "resumed": "Investment opportunity resumed",
+        "closed": "Investment opportunity closed",
+        "cancelled": "Investment opportunity cancelled"
+      },
+      "investor": {
+        "invited": "Investor invited",
+        "invitation_resent": "Investor invitation resent",
+        "updated": "Investor details updated",
+        "invitation_withdrawn": "Investor invitation withdrawn",
+        "suspended": "Investor suspended",
+        "reinstated": "Investor reinstated",
+        "closed": "Investor account closed"
       }
     },
     "detail": {
@@ -262,7 +309,28 @@
       "field": "Field",
       "before": "Before",
       "after": "After",
-      "metadata": "Extra detail"
+      "metadata": "Extra detail",
+      "ladder": "Investment tiers",
+      "ladderAsRecorded": "The tiers as recorded at the time.",
+      "ladderReplaced": "Replaced tiers",
+      "tierAdded": "Added",
+      "tierRemoved": "Removed",
+      "tierChanged": "Changed",
+      "range": "{from} – {to}",
+      "fromUpwards": "{from} and above",
+      "term": "{min}–{max} months",
+      "termOpen": "{min} months or more",
+      "termNone": "No fixed term",
+      "notice": "{days} days notice",
+      "noNotice": "No notice period",
+      "itemCount": "{count} items",
+      "perYear": "{percent}% a year",
+      "periodUnknown": "period not recorded",
+      "noOptions": "No options recorded",
+      "showRaw": "Show what was recorded",
+      "hideRaw": "Hide what was recorded",
+      "rawNote": "The entry exactly as stored, for when the summary above is not enough.",
+      "unknownAction": "This version of the admin portal has no wording for this event yet."
     },
     "signIns": {
       "title": "Sign-in activity",
@@ -293,6 +361,67 @@
         "INVITATION_ACCEPTED": "Invitation accepted",
         "SESSION_REVOKED": "Session revoked"
       }
+    },
+    "fields": {
+      "status": "Status",
+      "name": "Name",
+      "slug": "Web address",
+      "type": "Type",
+      "sector": "Sector",
+      "verification": "Verification",
+      "isFeatured": "Featured",
+      "order": "Display order",
+      "version": "Version",
+      "scope": "Applies to",
+      "companyId": "Company",
+      "roiBasis": "Rate period",
+      "tierCount": "Number of tiers",
+      "tiers": "Tiers",
+      "notes": "Notes",
+      "replaced": "Replaced",
+      "currency": "Currency",
+      "minimumInvestment": "Minimum investment",
+      "maxRoiPercent": "Maximum rate",
+      "maxRoiBasis": "Maximum rate period",
+      "defaultNoticePeriodDays": "Default notice period",
+      "requireStepUpToPublish": "Password confirmation to publish",
+      "key": "Key",
+      "permissions": "Permissions",
+      "roles": "Roles",
+      "fullName": "Full name",
+      "jobTitle": "Job title",
+      "preferredLocale": "Language",
+      "email": "Email address",
+      "from": "Taken from",
+      "hadRoles": "Roles held",
+      "addedRoles": "Roles added",
+      "removedFromSource": "Removed from the other account",
+      "method": "Method",
+      "invitationExpiresAt": "Invitation expires",
+      "nothing": "Nothing"
+    },
+    "metadata": {
+      "reason": "Reason given",
+      "stepUp": "Password confirmation",
+      "scope": "Applies to",
+      "copiedFrom": "Copied from",
+      "replacedId": "Replaced rule set",
+      "leavesNothingLive": "Leaves no live rules",
+      "slugUnchanged": "Web address kept as",
+      "affectedStaff": "Staff affected",
+      "method": "Method",
+      "source": "Source",
+      "values": {
+        "own_password": "The administrator re-entered their own password",
+        "not_required": "Not required by the settings at the time",
+        "step_up_failed": "The password was not accepted",
+        "temporary_password": "A temporary password was issued",
+        "invitation": "By invitation",
+        "password": "With a password set directly",
+        "bootstrap-cli": "The first-administrator command"
+      },
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "auth": {
@@ -638,7 +767,12 @@
           "title": "No opportunities yet",
           "description": "Once the investment engine is in place, opportunities for {name} will be listed here with their tiers and returns.",
           "blocked": "{name} is not open for investment, so no opportunities can be offered while that is the case."
-        }
+        },
+        "create": "New opportunity",
+        "loadError": "Could not load this company’s investment opportunities.",
+        "blockedNote": "{name} is not currently eligible to accept new investments. Existing opportunities remain visible for reference.",
+        "more": "{count, plural, one {1 more opportunity} other {# more opportunities}}",
+        "viewAll": "View all opportunities"
       }
     },
     "create": {
@@ -1058,6 +1192,235 @@
       "impactBody": "Nothing stops working and existing investments keep their terms, but the live ladder would no longer pass its own rules — so the next version copied from it cannot be published until the rates or ranges change.",
       "impactUnknown": "Could not check what this would do to the live ladder.",
       "failed": "Could not save the settings."
+    }
+  },
+  "opportunities": {
+    "title": "Investment opportunities",
+    "searchPlaceholder": "Search opportunities by title or company",
+    "loadError": "The opportunity list could not be loaded.",
+    "featured": "Featured opportunity",
+    "columns": {
+      "title": "Opportunity",
+      "company": "Company",
+      "status": "Status",
+      "funding": "Funding",
+      "closes": "Closes",
+      "updated": "Last updated"
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "OPEN": "Open",
+      "SUSPENDED": "Suspended",
+      "FULLY_FUNDED": "Fully funded",
+      "CLOSED": "Closed",
+      "CANCELLED": "Cancelled"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "companyType": "Company type",
+      "allCompanyTypes": "All company types",
+      "liveOnly": "Live only",
+      "yes": "Yes"
+    },
+    "empty": {
+      "title": "No opportunities match",
+      "description": "Try a different search or clear the filters to see all opportunities."
+    },
+    "create": {
+      "action": "New opportunity",
+      "title": "Create an investment opportunity",
+      "description": "Prepare a draft funding opportunity for a company. Investors will not see it until it opens.",
+      "submit": "Create draft",
+      "failed": "The opportunity could not be created. Please try again.",
+      "rejected": "The opportunity was rejected by the server. Review the information and try again.",
+      "draftNote": "This saves a draft only. Opening the opportunity to investors is a separate approval step.",
+      "company": "Company",
+      "chooseCompany": "Choose a company",
+      "companyNotAccepting": "You can prepare a draft for {name}, but this company cannot accept new investment until its status or verification changes.",
+      "companyHelp": "Choose the company that will receive investments through this opportunity.",
+      "titleLabel": "Opportunity title",
+      "titlePlaceholder": "For example, Property Development Funding",
+      "titleHelp": "Use a clear title investors can recognize. The web address is generated when the draft is created.",
+      "titleTooShort": "Enter at least two characters for the title.",
+      "summary": "Short summary",
+      "summaryPlaceholder": "Describe the investment opportunity in one sentence",
+      "summaryHelp": "A brief introduction for the opportunity list and its header.",
+      "descriptionLabel": "Full description",
+      "descriptionPlaceholder": "Explain the project, purpose of funding, and important details.",
+      "target": "Funding target",
+      "targetHelp": "The total amount this opportunity aims to raise.",
+      "closesOn": "Closing date (optional)",
+      "closesOnHelp": "The opportunity closes at the end of the selected day in UAE time. Leave blank for no scheduled closing date.",
+      "featured": "Feature this opportunity",
+      "featuredHelp": "Featured opportunities appear more prominently in the marketplace."
+    },
+    "summary": {
+      "loadError": "The opportunity summary could not be loaded.",
+      "open": "Open opportunities",
+      "ofTotal": "Out of {total} opportunities",
+      "committed": "Committed capital",
+      "ofTarget": "Of {target} targeted",
+      "draft": "Draft opportunities",
+      "draftHelp": "Not yet available for investment.",
+      "fullyFunded": "Fully funded",
+      "fullyFundedHelp": "Opportunities that have reached their funding target."
+    },
+    "issues": {
+      "close_before_open": "The closing date must be later than the opening date.",
+      "close_in_past": "The closing date must be in the future.",
+      "company_not_accepting": "This company is not currently eligible to accept investments.",
+      "no_company": "Choose a company for this opportunity.",
+      "no_live_ladder": "This company does not have an applicable active investment rule set.",
+      "no_title": "Enter a title for this opportunity.",
+      "target_below_committed": "The funding target cannot be less than the amount already committed.",
+      "target_below_minimum": "The funding target is below the platform minimum investment amount.",
+      "target_lowered": "The funding target cannot be reduced once the opportunity is running.",
+      "target_not_positive": "The funding target must be greater than zero."
+    },
+    "createdBy": "Created by {who} on {when}",
+    "openedBy": "Opened by {who} on {when}",
+    "endedAt": "Ended on {when}",
+    "someone": "a former staff member",
+    "funding": {
+      "label": "Funding progress",
+      "percent": "{percent}% funded",
+      "amounts": "{committed} committed out of {target}"
+    },
+    "closing": {
+      "openEnded": "No closing date",
+      "passed": "Closing date has passed",
+      "daysLeft": "{count, plural, one {1 day left} other {# days left}}"
+    },
+    "detail": {
+      "backToList": "Back to opportunities",
+      "missing": {
+        "title": "Opportunity not found",
+        "description": "The link may be incorrect, or the opportunity may no longer be available. Open one from the list instead."
+      },
+      "loadError": {
+        "title": "Could not load this opportunity",
+        "description": "There was a problem loading the opportunity. Please try again."
+      },
+      "about": "About this opportunity",
+      "noDescription": "No full description has been added yet.",
+      "funding": "Funding details",
+      "target": "Funding target",
+      "remaining": "Amount remaining",
+      "closes": "Closing date",
+      "hardCapNote": "Once the funding target is reached, this opportunity cannot accept additional commitments.",
+      "statusNote": {
+        "DRAFT": "This opportunity is a draft. Investors cannot invest until an authorized administrator opens it.",
+        "OPEN": "This opportunity is open and accepting investments.",
+        "SUSPENDED": "Investments are temporarily paused for this opportunity.",
+        "FULLY_FUNDED": "This opportunity has reached its funding target and is no longer accepting investments.",
+        "CLOSED": "This opportunity has closed and is no longer accepting investments.",
+        "CANCELLED": "This opportunity was cancelled and is no longer accepting investments."
+      },
+      "createdBy": "Created by {who} on {when}",
+      "openedBy": "Opened by {who} on {when}",
+      "endedAt": "Ended on {when}",
+      "someone": "a former staff member"
+    },
+    "terms": {
+      "title": "Investment terms",
+      "pinnedTo": "Terms fixed to {name} v{version}",
+      "viewRuleSet": "View rule set",
+      "minimum": "Minimum investment",
+      "bestRate": "Highest available return rate",
+      "bestRateValue": "{percent}% {basis, select, MONTHLY {per month} QUARTERLY {per quarter} ANNUAL {per year} other {}} · {mode, select, LOCKED {locked} UNLOCKED {unlocked} other {}}",
+      "noRulePermission": "You can see the headline terms, but your role does not allow you to view the full investment ladder.",
+      "loadError": "Could not load the full investment ladder.",
+      "previewDescription": "These are the active rules that would be used if this draft opened now. They are not pinned yet.",
+      "noLiveLadder": "No active investment ladder is available for this company. Publish one before opening the opportunity.",
+      "previewNote": "Preview based on {name} v{version}. The final terms are fixed when the opportunity opens.",
+      "neverOpened": "No investment terms were recorded because this opportunity never opened."
+    },
+    "errors": {
+      "failed": "Could not complete this opportunity action. Please try again.",
+      "forbidden": "You do not have permission to perform this action on the opportunity.",
+      "invalid_opportunity": "Some opportunity details are invalid. Review the highlighted fields and try again.",
+      "not_found": "This investment opportunity could not be found. It may have been removed.",
+      "no_change": "Nothing has changed. Update at least one field before saving.",
+      "changed_meanwhile": "Another administrator changed this opportunity. Refresh the page and try again.",
+      "slug_race": "Another opportunity with the same title was created at the same time. Try saving again.",
+      "closing_date_in_past": "A running opportunity cannot have its closing date moved into the past.",
+      "unknown_company": "The selected company no longer exists. Choose another company.",
+      "not_seeded": "The investment settings are not ready. Ask an administrator to initialize the platform settings.",
+      "no_live_ladder": "No active investment rules are available for this company. Publish a rule set before opening it.",
+      "no_ladder_to_pin": "There is no active investment rule set to fix the terms of this opportunity.",
+      "company_not_accepting": "This company is not currently eligible to accept new investments.",
+      "company_locked": "The company of an opened investment opportunity cannot be changed.",
+      "finished": "This investment opportunity has finished and can no longer be edited.",
+      "invalid_title": "Enter a valid investment opportunity title.",
+      "invalid_transition": "This status change is not allowed from the opportunity’s current status.",
+      "not_a_draft": "This action requires an investment opportunity that is still a draft.",
+      "slug_exhausted": "A unique link could not be generated for this opportunity. Try a different title."
+    },
+    "edit": {
+      "title": "Edit investment opportunity",
+      "description": "Update the details of {title}. Changes to an active raise may be limited to protect existing investment terms.",
+      "companyLocked": "The company cannot be changed after the opportunity has opened.",
+      "titleHelp": "Use a clear title investors will recognize. Changing it does not change the opportunity’s existing web address.",
+      "forbidden": "You do not have permission to edit this opportunity.",
+      "targetLocked": "The current funding target is {current}. You may increase it, but you cannot reduce it after the opportunity opens.",
+      "closesOnLive": "An open or suspended opportunity must have a closing date in the future, if one is set.",
+      "lockedNote": "After opening, the company and published investment terms are fixed. You can update descriptive details, extend the closing date, or increase the funding target."
+    },
+    "moves": {
+      "open": {
+        "title": "Open {title} for investment?",
+        "description": "Make this opportunity available to investors with the current published investment terms.",
+        "confirm": "Open opportunity",
+        "consequence": "Opening makes the opportunity available for investment and permanently pins the currently published investment rules to this raise.",
+        "pins": "Terms to be pinned: {name}, version {version}."
+      },
+      "resume": {
+        "title": "Resume {title}?",
+        "description": "Allow investors to commit to this suspended opportunity again.",
+        "confirm": "Resume investment",
+        "consequence": "Investors can invest again if the company and closing date remain eligible. Previously pinned terms do not change."
+      },
+      "suspend": {
+        "title": "Suspend {title}?",
+        "description": "Temporarily stop this opportunity from accepting new investments.",
+        "confirm": "Suspend opportunity",
+        "consequence": "The opportunity remains visible, but investors cannot make new commitments until it is resumed."
+      },
+      "close": {
+        "title": "Close {title}?",
+        "description": "Finish this opportunity and stop accepting investments.",
+        "confirm": "Close opportunity",
+        "consequence": "Closing ends this raise permanently. It cannot be reopened; existing commitments and recorded terms are preserved."
+      },
+      "cancel": {
+        "title": "Cancel {title}?",
+        "description": "Withdraw this opportunity from further investment.",
+        "confirm": "Cancel opportunity",
+        "consequence": "Cancellation is permanent and cannot be reversed. Existing records are retained for the audit trail."
+      },
+      "checking": "Checking whether this opportunity can proceed…",
+      "blocked": "This action is currently blocked for the following reasons:",
+      "reasonLabel": "Reason (required)",
+      "noteLabel": "Note (optional)",
+      "reasonHelp": "Provide a reason of at least {min} characters. It will be recorded in the audit trail.",
+      "noteHelp": "Add context for the audit trail if needed.",
+      "final": "This action is final and cannot be undone."
+    },
+    "actions": {
+      "open": "Open",
+      "suspend": "Suspend",
+      "resume": "Resume",
+      "close": "Close",
+      "cancel": "Cancel",
+      "edit": "Edit opportunity",
+      "deleteDraft": "Delete draft"
+    },
+    "delete": {
+      "title": "Delete draft opportunity?",
+      "message": "Delete the draft “{title}”? This permanently removes the draft and cannot be undone.",
+      "confirm": "Delete draft",
+      "keep": "Keep draft"
     }
   }
 }

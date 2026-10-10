@@ -14,6 +14,7 @@ import {
   MaxLength,
   Min,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
@@ -25,7 +26,7 @@ import {
   type CompanyVerification,
 } from '@afaq/types';
 
-/** Turns "" into null, so an emptied form field clears the column. */
+/** Turns "" into null, so an emptied optional form field clears the column. */
 const emptyToNull = ({ value }: { value: unknown }): unknown =>
   typeof value === 'string' && value.trim() === '' ? null : value;
 
@@ -36,9 +37,9 @@ const trimmed = ({ value }: { value: unknown }): unknown =>
 /**
  * Creating a company.
  *
- * Neither the slug nor the verification state appears here. The slug is derived
- * from the name by the API, once. Verification has its own endpoint and its own
- * permission, so that somebody who may fix a typo cannot also certify a partner.
+ * Neither the slug nor the verification state appears here. The slug is
+ * derived from the name by the API, once. Verification has its own endpoint
+ * and permission, so editing text cannot certify a partner.
  */
 export class CreateCompanyDto {
   @ApiProperty({ example: 'Afaq Al Manzil Properties' })
@@ -73,7 +74,7 @@ export class CreateCompanyDto {
   @IsOptional()
   description?: string | null;
 
-  /** A Supabase Storage path, not a public URL — so not validated as one. */
+  /** A Supabase Storage path, not a public URL. */
   @ApiPropertyOptional({ description: 'Supabase Storage path' })
   @Transform(emptyToNull)
   @IsString()
@@ -90,7 +91,6 @@ export class CreateCompanyDto {
 
   @ApiPropertyOptional({ example: 'https://www.afaqalmanzilproperties.com/' })
   @Transform(emptyToNull)
-  // require_tld keeps "http://localhost" out of production data.
   @IsUrl({ protocols: ['http', 'https'], require_protocol: true, require_tld: true })
   @IsOptional()
   website?: string | null;
@@ -122,13 +122,11 @@ export class CreateCompanyDto {
 }
 
 /**
- * Editing a company. Every field optional — the service refuses a request that
- * would change nothing rather than writing an empty audit entry.
+ * Editing a company. Every field is optional to submit; required DB fields
+ * must nevertheless reject explicit null and empty strings.
  *
- * Written out rather than derived with PartialType so that what an edit may
- * touch is visible in one place. Notably absent: type, status, verification.
- * Changing what kind of company this is, or whether it trades, or whether it
- * has been checked, each has its own endpoint and its own permission.
+ * Type, status and verification are deliberately absent: each is managed by
+ * its own endpoint and permissions.
  */
 export class UpdateCompanyDto {
   @ApiPropertyOptional()
@@ -136,7 +134,8 @@ export class UpdateCompanyDto {
   @IsString()
   @MinLength(2)
   @MaxLength(160)
-  @IsOptional()
+  // IsOptional skips null as well as undefined; use ValidateIf instead.
+  @ValidateIf((_object, value: unknown) => value !== undefined)
   name?: string;
 
   @ApiPropertyOptional()
@@ -151,7 +150,7 @@ export class UpdateCompanyDto {
   @IsString()
   @MinLength(2)
   @MaxLength(80)
-  @IsOptional()
+  @ValidateIf((_object, value: unknown) => value !== undefined)
   sector?: string;
 
   @ApiPropertyOptional()
@@ -233,11 +232,8 @@ export class SetCompanyFeaturedDto {
 }
 
 /**
- * A new marketplace order.
- *
- * The complete list of company ids, in the order they should appear. Complete
- * on purpose: a partial list would leave everything absent on its old number
- * and produce an interleaved order nobody asked for.
+ * A new marketplace order. The full list of company IDs, not a partial one,
+ * so an absent company cannot silently retain a conflicting old position.
  */
 export class ReorderCompaniesDto {
   @ApiProperty({ type: [String], description: 'Every company id, in the order wanted' })

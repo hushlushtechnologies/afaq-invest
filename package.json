@@ -20,6 +20,7 @@
     "db:studio": "pnpm --filter @afaq/database db:studio",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
+    "check:i18n": "node scripts/check-message-placeholders.mjs",
     "clean": "turbo run clean",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

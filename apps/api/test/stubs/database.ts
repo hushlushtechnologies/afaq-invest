@@ -16,3 +16,5 @@ export function createPrismaClient(): PrismaClient {
 }
 
 export type PrismaTransactionClient = PrismaClient;
+
+export type InputJsonValue = unknown;

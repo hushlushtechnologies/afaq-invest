@@ -18,3 +18,6 @@ export * from './roles';
 export * from './staff';
 export * from './company';
 export * from './investment';
+export * from './opportunity';
+export * from './investor';
+export * from './kyc';

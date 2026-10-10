@@ -11,6 +11,9 @@
  *   - the starter ladder is written only when no rule set exists at all
  *   - custom roles, staff members, role assignments and audit records are
  *     never touched
+ *   - example opportunities are written only when SEED_EXAMPLE_OPPORTUNITIES
+ *     is "true", only as drafts, and never altered once present — see
+ *     seed-opportunities.ts for why they are off by default
  *
  * Run with:  pnpm db:seed
  */
@@ -21,6 +24,7 @@ import {
   PERMISSIONS,
   SYSTEM_ROLES,
   SUPER_ADMIN_ROLE_KEY,
+  validateOpportunity,
   validateTierLadder,
   type LadderContext,
   type RoiBasis,
@@ -33,6 +37,7 @@ import {
   SEED_RULE_SET_NAME,
   SEED_TIERS,
 } from './seed-investment.js';
+import { SEED_EXAMPLE_OPPORTUNITIES_FLAG, SEED_OPPORTUNITIES } from './seed-opportunities.js';
 
 function getConnectionString(): string {
   // Migrations and seeding use the direct connection; the pooler is for the
@@ -314,6 +319,85 @@ async function main(): Promise<void> {
       }
     }
 
+    // --- example opportunities (development only) ---------------------------
+    //
+    // Off unless asked for. A raise is a public claim about a real company, so
+    // inventing one in a database that may be production is not a default.
+    if (process.env[SEED_EXAMPLE_OPPORTUNITIES_FLAG] === 'true') {
+      let opportunitiesCreated = 0;
+
+      for (const example of SEED_OPPORTUNITIES) {
+        const existing = await prisma.investmentOpportunity.findUnique({
+          where: { slug: example.slug },
+          select: { id: true },
+        });
+
+        if (existing) continue;
+
+        const company = await prisma.company.findUnique({
+          where: { slug: example.companySlug },
+          select: { id: true },
+        });
+
+        if (!company) {
+          throw new Error(
+            `Example opportunity "${example.slug}" names company "${example.companySlug}", which does not exist.`,
+          );
+        }
+
+        // The same check the API runs on save. Opening is not attempted: the
+        // examples stay drafts, so no ladder is pinned and nobody can invest.
+        const issues = validateOpportunity(
+          {
+            companyId: company.id,
+            title: example.title,
+            targetAmount: example.targetAmount,
+            closesAt: null,
+          },
+          {
+            minimumInvestment: Number(settings.minimumInvestment),
+            currentStatus: null,
+            committedAmount: 0,
+            previousTarget: null,
+            companyAcceptsInvestment: true,
+            hasLiveLadder: true,
+            opensAt: null,
+            now: new Date(),
+          },
+        );
+
+        if (issues.length > 0) {
+          throw new Error(
+            `Example opportunity "${example.slug}" is not valid:\n` +
+              issues.map((issue) => `  - [${issue.code}] ${issue.message}`).join('\n'),
+          );
+        }
+
+        await prisma.investmentOpportunity.create({
+          data: {
+            slug: example.slug,
+            companyId: company.id,
+            title: example.title,
+            summary: example.summary,
+            status: 'DRAFT',
+            targetAmount: example.targetAmount,
+            displayOrder: example.displayOrder,
+          },
+        });
+
+        opportunitiesCreated += 1;
+      }
+
+      console.log(
+        `Examples:     ${SEED_OPPORTUNITIES.length} example opportunities expected, ` +
+          `${opportunitiesCreated} created as drafts`,
+      );
+    } else {
+      console.log(
+        `Examples:     skipped (set ${SEED_EXAMPLE_OPPORTUNITIES_FLAG}=true for development drafts)`,
+      );
+    }
+
     const [
       permissionCount,
       roleCount,
@@ -322,6 +406,7 @@ async function main(): Promise<void> {
       companyCount,
       internalCount,
       tierCount,
+      opportunityCount,
     ] = await Promise.all([
       prisma.permission.count(),
       prisma.role.count({ where: { isSystem: true } }),
@@ -330,6 +415,7 @@ async function main(): Promise<void> {
       prisma.company.count(),
       prisma.company.count({ where: { type: 'INTERNAL' } }),
       prisma.investmentTier.count(),
+      prisma.investmentOpportunity.count(),
     ]);
 
     console.log('');
@@ -340,6 +426,7 @@ async function main(): Promise<void> {
     console.log(`  staff:         ${staffCount} (untouched)`);
     console.log(`  companies:     ${companyCount} (${internalCount} internal)`);
     console.log(`  tiers:         ${tierCount}`);
+    console.log(`  opportunities: ${opportunityCount}`);
 
     if (staffCount === 0) {
       console.log('');

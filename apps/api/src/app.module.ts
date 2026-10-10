@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { AuditModule } from './audit/audit.module.js';
 import { CompaniesModule } from './companies/companies.module.js';
 import { InvestmentRulesModule } from './investment-rules/investment-rules.module.js';
+import { OpportunitiesModule } from './opportunities/opportunities.module.js';
 import { RolesModule } from './roles/roles.module.js';
 import { StaffModule } from './staff/staff.module.js';
 import { SupabaseModule } from './supabase/supabase.module.js';
@@ -29,6 +30,7 @@ import { SupabaseModule } from './supabase/supabase.module.js';
     StaffModule,
     CompaniesModule,
     InvestmentRulesModule,
+    OpportunitiesModule,
     HealthModule,
   ],
 })

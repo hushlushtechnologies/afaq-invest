@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState, type ReactNode } from 'react';
 import {
   AUDIT_CATEGORIES,
+  type AuditCategory,
   type AuditListQuery,
   type AuditLogListItem,
   type Locale,
@@ -15,6 +16,7 @@ import {
   FilterBar,
   TableToolbar,
   type ActiveFilter,
+  type BadgeVariant,
 } from '@afaq/ui';
 import { formatDateTime } from '@afaq/utils';
 import { useAuditLog } from '@/lib/audit/use-audit';
@@ -24,14 +26,25 @@ import { AuditEntryDrawer } from './audit-entry-drawer';
 
 const column = createDataTableColumns<AuditLogListItem>();
 
-/** Which colour each category carries, so the eye can skip to what it wants. */
-const CATEGORY_TONE: Record<string, 'info' | 'warning' | 'danger' | 'neutral'> = {
+/**
+ * Which colour each category carries, so the eye can skip to what it wants.
+ *
+ * Typed by AuditCategory rather than by string, so adding a category to the
+ * shared list and forgetting it here is a compile error instead of a silently
+ * grey badge. SECURITY is the only red: a refused step-up or a disabled
+ * control is the thing somebody scanning this list is hunting for.
+ * INVESTMENT_RULE carries the brand tint because it is the only area where a
+ * change alters what investors are being sold.
+ */
+const CATEGORY_TONE: Record<AuditCategory, BadgeVariant> = {
   AUTH: 'neutral',
   STAFF: 'info',
   ROLE: 'info',
   PERMISSION: 'warning',
   SECURITY: 'danger',
   SETTINGS: 'neutral',
+  COMPANY: 'info',
+  INVESTMENT_RULE: 'primary',
 };
 
 /**
@@ -72,7 +85,18 @@ export function AuditLogTable(): ReactNode {
       }),
       column.accessor('action', {
         header: t('columns.action'),
-        cell: ({ getValue }) => <span className="text-fg">{actionLabel(getValue())}</span>,
+        cell: ({ getValue }) => {
+          const label = actionLabel(getValue());
+
+          // An action this build has no wording for is shown in the monospace
+          // face, so it reads as a stored identifier rather than as a sentence
+          // somebody wrote badly.
+          return (
+            <span className={label.known ? 'text-fg' : 'font-mono text-caption text-fg-secondary'}>
+              {label.text}
+            </span>
+          );
+        },
       }),
       column.accessor('category', {
         header: t('columns.category'),

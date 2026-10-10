@@ -5,7 +5,9 @@ import {
   type RoiBasis,
   type RuleSetStatus,
   type TierDraft,
+  type AuditLadderTierWithOptions,
 } from '@afaq/types';
+
 import type { PrismaTransactionClient } from '@afaq/database';
 import type { StaffContext } from '../auth/staff-context.types.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -81,6 +83,20 @@ interface AuditJsonObject {
   [key: string]: AuditJsonValue;
 }
 
+function serialiseAuditTiers(tiers: readonly TierDraft[]) {
+  return summarise(tiers).map((tier) => ({
+    name: tier.name,
+    min: tier.min,
+    max: tier.max,
+    options: tier.options.map((option) => ({
+      mode: option.mode,
+      roi: option.roi,
+      payout: option.payout,
+      term: [option.term[0], option.term[1]],
+      notice: option.notice,
+    })),
+  }));
+}
 /**
  * Changing investment rules.
  *
@@ -461,7 +477,10 @@ export class InvestmentRulesManagementService {
           targetType: 'InvestmentRuleSet',
           targetId: target.id,
           targetLabel: `${target.name} v${target.version}`,
-          after: { tiers: summarise(tiers) },
+          after: {
+            roiBasis: target.roiBasis,
+            tiers: serialiseAuditTiers(tiers),
+          },
         },
       });
     });
@@ -573,7 +592,11 @@ export class InvestmentRulesManagementService {
           before: outgoing
             ? { replaced: `${outgoing.name} v${outgoing.version}`, replacedId: outgoing.id }
             : { replaced: null },
-          after: { scope: target.scope, roiBasis: target.roiBasis, tiers: summarise(stored) },
+          after: {
+            scope: target.scope,
+            roiBasis: target.roiBasis,
+            tiers: serialiseAuditTiers(stored),
+          },
           metadata: {
             stepUp: settings.requireStepUpToPublish ? 'own_password' : 'not_required',
             ...(input.reason ? { reason: input.reason } : {}),
@@ -767,7 +790,15 @@ export class InvestmentRulesManagementService {
  * The rates and ranges, not the identifiers: this has to stay readable to
  * somebody looking at it years later who no longer has the rows to join to.
  */
-function summarise(tiers: readonly TierDraft[]): AuditJsonValue[] {
+
+/**
+ * Create a compact investment ladder snapshot
+ * for the audit log.
+ *
+ * Uses the shared audit contract so the API
+ * and Admin portal agree on the stored format.
+ */
+export function summarise(tiers: readonly TierDraft[]): AuditLadderTierWithOptions[] {
   return tiers.map((tier) => ({
     name: tier.name,
     min: tier.minAmount,
@@ -776,7 +807,7 @@ function summarise(tiers: readonly TierDraft[]): AuditJsonValue[] {
       mode: option.mode,
       roi: option.roiPercent,
       payout: option.payoutFrequency,
-      term: [option.minTermMonths, option.maxTermMonths],
+      term: [option.minTermMonths, option.maxTermMonths] as [number | null, number | null],
       notice: option.noticePeriodDays,
     })),
   }));

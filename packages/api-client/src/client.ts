@@ -11,6 +11,11 @@ export interface ApiClientOptions {
  * `reason` carries the API's machine-readable explanation — "suspended",
  * "missing_permission" and so on — so the interface can say something useful
  * rather than just "forbidden".
+ *
+ * `details` is the whole response body, for refusals that carry more than a
+ * reason — an opportunity refused with every validation issue listed, say.
+ * Read it through a narrowing helper, never by trusting its shape: it is
+ * whatever the server sent.
  */
 export class ApiRequestError extends Error {
   constructor(
@@ -18,6 +23,7 @@ export class ApiRequestError extends Error {
     message: string,
     public readonly reason?: string,
     public readonly permission?: string,
+    public readonly details?: Readonly<Record<string, unknown>>,
   ) {
     super(message);
     this.name = 'ApiRequestError';
@@ -27,6 +33,10 @@ export class ApiRequestError extends Error {
 interface ApiErrorBody extends ApiError {
   reason?: string;
   permission?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 export function createApiClient({ baseUrl, getToken }: ApiClientOptions) {
@@ -48,6 +58,7 @@ export function createApiClient({ baseUrl, getToken }: ApiClientOptions) {
         body?.message ?? response.statusText,
         body?.reason,
         body?.permission,
+        isRecord(body) ? body : undefined,
       );
     }
 
